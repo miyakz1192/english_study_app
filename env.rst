@@ -174,13 +174,21 @@ VMと同じパスワードにしておいた。::
   
   $ mysql -u root -p
 
-engアプリ向けにengユーザを作る。これはパスワードなし。::
+engアプリ向けにengユーザを作る。パスワードはVMと同じ::
 
   mysql> CREATE USER eng
       -> ;
   Query OK, 0 rows affected (0.01 sec)
   
   mysql> 
+
+  ※ アスタリスクの部分をVMのパスワードに置き換え。
+
+  mysql> SET PASSWORD FOR eng = '*';
+  Query OK, 0 rows affected (0.00 sec)
+
+  mysql> 
+
 
 また、DBのcreate権限を与える::
 
@@ -212,9 +220,10 @@ engアプリ向けにengユーザを作る。これはパスワードなし。::
   Query OK, 0 rows affected (0.03 sec)
   
   mysql> 
-  
+
 ちょっとやり過ぎかもなぁ。まぁ、良いか。
 
+  
 以下のURLを参考にした。
 
 https://www.virment.com/how-to-install-mysql-ubuntu/
@@ -1523,6 +1532,8 @@ webpackerのinstallも今度こそちゃんと成功した。::
   Done in 34.18s.
   Webpacker successfully installed 🎉 🍰
   miyakz@eng2:~/environment/eng$ 
+
+上記のようなやりかたでやっとアプリが正常に動作した！
 
 参考
 ====
