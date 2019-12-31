@@ -6,19 +6,28 @@
 </p>
 
 <p>
-  <strong>En:</strong>
-  <%= @sentence.en %>
-</p>
-
-<p>
   <strong>Jp:</strong>
   <%= @sentence.jp %>
 </p>
+
+<div id="disp" style="visibility:hidden">
+  <p>
+    <strong>En:</strong>
+    <%= @sentence.en %>
+  </p>
+</div>
+
+<form>
+<input type="button" value="答え表示" onclick="hyoji1(0)">
+<input type="button" value="答え非表示" onclick="hyoji1(1)">
+</form>
 
 <p>
   <strong>Voice data:</strong>
   <%= @sentence.voice_data %>
 </p>
+
+
 
 <%= link_to 'Back', sentence_path(Sentence.find_by_no(@sentence.no-1)) %>
 <%= link_to 'Next', sentence_path(Sentence.find_by_no(@sentence.no+1)) %>
@@ -26,3 +35,17 @@
 <hr>
 <br>
 <%= link_to 'list', sentences_path %>
+
+<script>
+  function hyoji1(num)
+  {
+    if (num == 0)
+    {
+      document.getElementById("disp").style.visibility="visible";
+    }
+    else
+    {
+      document.getElementById("disp").style.visibility="hidden";
+    }
+  }
+</script>
