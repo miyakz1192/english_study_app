@@ -20,5 +20,9 @@
   <%= @sentence.voice_data %>
 </p>
 
-<%= link_to 'Edit', edit_sentence_path(@sentence) %> |
-<%= link_to 'Back', sentences_path %>
+<%= link_to 'Back', sentence_path(Sentence.find_by_no(@sentence.no-1)) %>
+<%= link_to 'Next', sentence_path(Sentence.find_by_no(@sentence.no+1)) %>
+
+<hr>
+<br>
+<%= link_to 'list', sentences_path %>
