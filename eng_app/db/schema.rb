@@ -14,6 +14,7 @@ ActiveRecord::Schema.define(version: 2019_12_31_014939) do
 
   create_table "scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.boolean "passed"
+    t.integer "val"
     t.integer "sentence_id"
     t.integer "user_id"
     t.datetime "created_at", precision: 6, null: false
