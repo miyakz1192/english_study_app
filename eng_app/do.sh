@@ -7,6 +7,5 @@
   #create all db that defined in database.yaml
   rails db:create:all
 
-  rails db:migrate
   rails db:migrate RAILS_ENV=development
 
