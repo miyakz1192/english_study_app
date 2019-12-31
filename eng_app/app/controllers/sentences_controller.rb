@@ -1,10 +1,12 @@
 class SentencesController < ApplicationController
   before_action :set_sentence, only: [:show, :edit, :update, :destroy]
 
+  PER = 5
+
   # GET /sentences
   # GET /sentences.json
   def index
-    @sentences = Sentence.all
+    @sentences = Sentence.page(params[:page]).per(PER)
   end
 
   # GET /sentences/1
