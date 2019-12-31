@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  passed: false
+  sentence_id: 1
+  user_id: 1
+
+two:
+  passed: false
+  sentence_id: 1
+  user_id: 1

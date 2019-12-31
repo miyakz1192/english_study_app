@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>No:</strong>
+  <%= @sentence.no %>
+</p>
+
+<p>
+  <strong>En:</strong>
+  <%= @sentence.en %>
+</p>
+
+<p>
+  <strong>Jp:</strong>
+  <%= @sentence.jp %>
+</p>
+
+<p>
+  <strong>Voice data:</strong>
+  <%= @sentence.voice_data %>
+</p>
+
+<%= link_to 'Edit', edit_sentence_path(@sentence) %> |
+<%= link_to 'Back', sentences_path %>

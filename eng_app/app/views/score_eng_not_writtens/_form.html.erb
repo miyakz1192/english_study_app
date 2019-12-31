@@ -1,0 +1,17 @@
+<%= form_with(model: score_eng_not_written, local: true) do |form| %>
+  <% if score_eng_not_written.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(score_eng_not_written.errors.count, "error") %> prohibited this score_eng_not_written from being saved:</h2>
+
+      <ul>
+        <% score_eng_not_written.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

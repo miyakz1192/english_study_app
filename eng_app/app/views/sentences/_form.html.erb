@@ -1,0 +1,37 @@
+<%= form_with(model: sentence, local: true) do |form| %>
+  <% if sentence.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(sentence.errors.count, "error") %> prohibited this sentence from being saved:</h2>
+
+      <ul>
+        <% sentence.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :no %>
+    <%= form.number_field :no %>
+  </div>
+
+  <div class="field">
+    <%= form.label :en %>
+    <%= form.text_field :en %>
+  </div>
+
+  <div class="field">
+    <%= form.label :jp %>
+    <%= form.text_field :jp %>
+  </div>
+
+  <div class="field">
+    <%= form.label :voice_data %>
+    <%= form.text_field :voice_data %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

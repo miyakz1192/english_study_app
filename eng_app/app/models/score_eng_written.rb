@@ -1,0 +1,2 @@
+class ScoreEngWritten < Score
+end

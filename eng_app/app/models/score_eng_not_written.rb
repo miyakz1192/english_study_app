@@ -1,0 +1,2 @@
+class ScoreEngNotWritten < Score
+end

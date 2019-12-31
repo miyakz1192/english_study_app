@@ -9,7 +9,7 @@ engアプリを作ってみる。
 User Sentence, Score各種を作って、db:migrateする。::
 
   rails generate scaffold User name:string passwd_hash:string
-  rails generate scaffold Sentence en:string jp:string voice_data:string
+  rails generate scaffold Sentence no:integer en:string jp:string voice_data:string
   rails generate scaffold Score passed:boolean sentence_id:integer user_id:integer
   rails generate scaffold ScoreEngWritten --parent Score 
   rails generate scaffold ScoreEngNotWritten --parent Score 
@@ -19,6 +19,7 @@ User Sentence, Score各種を作って、db:migrateする。::
 
   rails db:migrate
   rails db:migrate RAILS_ENV=development
+
 
 Sentenceを読み込む(初期データの投入)
 ==========================================
