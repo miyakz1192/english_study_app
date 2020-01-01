@@ -6,16 +6,21 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 #
+#
 
-sentence_file_path="/home/miyakz/sentence_data.txt"
+############## CONFIGRATION #######################
+sentence_file_path = ENV["SENTENCE_FILE_PATH"]
+###################################################
+
+puts "INFO: start initial data"
 
 unless sentence_file_path
   puts "ERROR: sentence_file_path is required"
   exit 
 end
 
+puts "INFO:  initialize sentence data"
 Sentence.destroy_all
-
 File.open(sentence_file_path) do |f|
   f.each_line do |line|
     s = line.split("::")
@@ -23,8 +28,10 @@ File.open(sentence_file_path) do |f|
     jp = s[1]
     en = s[2]
     Sentence.create([{no: no, jp: jp, en: en}])
+    puts "INFO:   no #{no} is done"
   end
 end
 
-
-
+puts "INFO:  initialize user data"
+User.destroy_all
+User.create!(name: ENV["INIT_USER_NAME"], email: ENV["INIT_USER_EMAIL"], password: ENV["INIT_USER_PASSWD"])
