@@ -8,11 +8,12 @@ engアプリを作ってみる。
 
 User Sentence, Score各種を作って、db:migrateする。::
 
-  rails generate scaffold User name:string passwd_hash:string
   rails generate scaffold Sentence no:integer en:string jp:string voice_data:string
   rails generate scaffold Score passed:boolean sentence_id:integer user_id:integer
   rails generate scaffold ScoreEngWritten --parent Score 
   rails generate scaffold ScoreEngNotWritten --parent Score 
+  rails g devise User name:string
+  rails g devise:views users
 
   #create all db that defined in database.yaml
   rails db:create:all
@@ -84,6 +85,78 @@ deviseというgemを使うと高度な認証機能がさくっと作れるら�
 
 https://web-camp.io/magazine/archives/16811
 
+以下もさくっとまとまっている。
+
+https://kitsune.blog/rails-devise
+
+environment.rbとroute.rbに設定を追加して、モデルを作成。::
+
+  miyakz@eng2:~/english_study_app/eng_app$ rails g devise User name:string
+        invoke  active_record
+        create    db/migrate/20200101050938_devise_create_users.rb
+        create    app/models/user.rb
+        invoke    test_unit
+        create      test/models/user_test.rb
+        create      test/fixtures/users.yml
+        insert    app/models/user.rb
+         route  devise_for :users
+  miyakz@eng2:~/english_study_app/eng_app$ 
+
+devise環境でUserをconsoleから作るメモ
+-------------------------------------------
+
+以下で簡単に作成できる。
+
+irb(main):001:0> User.create!(name: 'hoge', email: 'admin@example.com', password: 'password')
+
+devise環境でnew userのregistrationを消すメモ
+------------------------------------------------
+
+以下の参考にあるとおりの手順を実行する。
+
+参考：https://kitsune.blog/rails-devise
+参考：https://github.com/plataformatec/devise#configuring-views
+
+config/initializers/devise.rbに以下のコードを追記し、カスタマイズを有効にする。::
+
+  config.scoped_views = true
+
+次に以下を実行して、カスタマイズ用のViewテンプレートを作成::
+
+  rails g devise:views users
+
+この自動生成されたファイルを好きなように編集する。::
+
+  miyakz@eng2:~/english_study_app/eng_app$ rails g devise:views users
+        invoke  Devise::Generators::SharedViewsGenerator
+        create    app/views/users/shared
+        create    app/views/users/shared/_error_messages.html.erb
+        create    app/views/users/shared/_links.html.erb
+        invoke  form_for
+        create    app/views/users/confirmations
+        create    app/views/users/confirmations/new.html.erb
+        create    app/views/users/passwords
+        create    app/views/users/passwords/edit.html.erb
+        create    app/views/users/passwords/new.html.erb
+        create    app/views/users/registrations
+        create    app/views/users/registrations/edit.html.erb
+        create    app/views/users/registrations/new.html.erb
+        create    app/views/users/sessions
+        create    app/views/users/sessions/new.html.erb
+        create    app/views/users/unlocks
+        create    app/views/users/unlocks/new.html.erb
+        invoke  erb
+        create    app/views/users/mailer
+        create    app/views/users/mailer/confirmation_instructions.html.erb
+        create    app/views/users/mailer/email_changed.html.erb
+        create    app/views/users/mailer/password_change.html.erb
+        create    app/views/users/mailer/reset_password_instructions.html.erb
+        create    app/views/users/mailer/unlock_instructions.html.erb
+  miyakz@eng2:~/english_study_app/eng_app$ 
+
+
+
+
 カードモードの開発系譜
 ========================
 
@@ -95,7 +168,18 @@ https://web-camp.io/magazine/archives/16811
   34ade0c7ed4fe974ad45d34f0608d21397a3ef8f 
   参考：https://www.pazru.net/js/DOM/7.html
 4) ユーザのログイン/ログアウトを作る
+  a2a781e6789fd7d17ef4a1c9090d4e0a49d496a7
+  85a58bf89c4d9ecc7fc166493aa28c5f5c22da8b
+  3314b908bd486ccfa41a5dd69540d72e3fc135bd
+  1dc3c2498a7a09174f4be1e15f5791517c62d11c
+　a5207192187772104512a62e1529b4dc20815fce
 5) ajaxを使って、書かずに正解/書かずに不正解のボタンを画面遷移しなくてもできるようにする。
+  結局ajaxを使わなくても良い方法で実装。
+  d4d7eec2bee5b65d6f5cd9f023d67260aafa5c59
+6) 「書かずに正解」とか「書いて正解」を押した場合に、前ページに戻る
+  0b4ff8b0da652c9e4f8a689083003bdbcde65bdd
+  参考：https://qiita.com/azusanakano/items/8af1266f53a656ef787d
+　
 
 
 
@@ -107,6 +191,23 @@ https://web-camp.io/magazine/archives/16811
 
   miyakz@eng2:~/english_study_app/eng_app$ rails routes
                                  Prefix Verb   URI Pattern                                                                              Controller#Action
+                       new_user_session GET    /users/sign_in(.:format)                                                                 devise/sessions#new
+                           user_session POST   /users/sign_in(.:format)                                                                 devise/sessions#create
+                   destroy_user_session DELETE /users/sign_out(.:format)                                                                devise/sessions#destroy
+                      new_user_password GET    /users/password/new(.:format)                                                            devise/passwords#new
+                     edit_user_password GET    /users/password/edit(.:format)                                                           devise/passwords#edit
+                          user_password PATCH  /users/password(.:format)                                                                devise/passwords#update
+                                        PUT    /users/password(.:format)                                                                devise/passwords#update
+                                        POST   /users/password(.:format)                                                                devise/passwords#create
+               cancel_user_registration GET    /users/cancel(.:format)                                                                  devise/registrations#cancel
+                  new_user_registration GET    /users/sign_up(.:format)                                                                 devise/registrations#new
+                 edit_user_registration GET    /users/edit(.:format)                                                                    devise/registrations#edit
+                      user_registration PATCH  /users(.:format)                                                                         devise/registrations#update
+                                        PUT    /users(.:format)                                                                         devise/registrations#update
+                                        DELETE /users(.:format)                                                                         devise/registrations#destroy
+                                        POST   /users(.:format)                                                                         devise/registrations#create
+                         accesses_hello GET    /accesses/hello(.:format)                                                                accesses#hello
+                       accesses_goodbye GET    /accesses/goodbye(.:format)                                                              accesses#goodbye
                  score_eng_not_writtens GET    /score_eng_not_writtens(.:format)                                                        score_eng_not_writtens#index
                                         POST   /score_eng_not_writtens(.:format)                                                        score_eng_not_writtens#create
               new_score_eng_not_written GET    /score_eng_not_writtens/new(.:format)                                                    score_eng_not_writtens#new
@@ -139,14 +240,7 @@ https://web-camp.io/magazine/archives/16811
                                         PATCH  /sentences/:id(.:format)                                                                 sentences#update
                                         PUT    /sentences/:id(.:format)                                                                 sentences#update
                                         DELETE /sentences/:id(.:format)                                                                 sentences#destroy
-                                  users GET    /users(.:format)                                                                         users#index
-                                        POST   /users(.:format)                                                                         users#create
-                               new_user GET    /users/new(.:format)                                                                     users#new
-                              edit_user GET    /users/:id/edit(.:format)                                                                users#edit
-                                   user GET    /users/:id(.:format)                                                                     users#show
-                                        PATCH  /users/:id(.:format)                                                                     users#update
-                                        PUT    /users/:id(.:format)                                                                     users#update
-                                        DELETE /users/:id(.:format)                                                                     users#destroy
+                                   root GET    /                                                                                        accesses#hello
           rails_mandrill_inbound_emails POST   /rails/action_mailbox/mandrill/inbound_emails(.:format)                                  action_mailbox/ingresses/mandrill/inbound_emails#create
           rails_postmark_inbound_emails POST   /rails/action_mailbox/postmark/inbound_emails(.:format)                                  action_mailbox/ingresses/postmark/inbound_emails#create
              rails_relay_inbound_emails POST   /rails/action_mailbox/relay/inbound_emails(.:format)                                     action_mailbox/ingresses/relay/inbound_emails#create
@@ -167,7 +261,7 @@ https://web-camp.io/magazine/archives/16811
               update_rails_disk_service PUT    /rails/active_storage/disk/:encoded_token(.:format)                                      active_storage/disk#update
                    rails_direct_uploads POST   /rails/active_storage/direct_uploads(.:format)                                           active_storage/direct_uploads#create
   miyakz@eng2:~/english_study_app/eng_app$ 
-
+  
 
 
 テストデータ
@@ -262,6 +356,11 @@ https://tamamemo.hatenablog.com/entry/20120113/1326435969
         remove      app/assets/stylesheets/users.scss
         invoke  scss
   miyakz@eng2:~/english_study_app/eng_app$ 
+
+rails cの便利州
+-------------------
+
+https://kzy52.com/entry/2014/11/28/235958
   
 
 
