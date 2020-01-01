@@ -1,4 +1,5 @@
 class SentencesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_sentence, only: [:show, :edit, :update, :destroy]
 
   PER = 5
