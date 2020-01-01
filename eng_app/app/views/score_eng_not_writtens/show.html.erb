@@ -1,4 +1,10 @@
-<p id="notice"><%= notice %></p>
-
-<%= link_to 'Edit', edit_score_eng_not_written_path(@score_eng_not_written) %> |
-<%= link_to 'Back', score_eng_not_writtens_path %>
+<body>
+  <p id="notice"><%= notice %></p>
+  <script>
+    function nop()
+    {
+      window.location.href = "<%= return_back_url %>";
+    }
+    setTimeout(nop, 1000);
+  </script>
+</body>

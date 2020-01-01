@@ -27,8 +27,8 @@
   <%= @sentence.voice_data %>
 </p>
 
-<%= button_to "書かずに正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: true, sentence_id: @sentence.id, user_id: 10}}} %>
-<%= button_to "書かずに不正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: false, sentence_id: @sentence.id, user_id: 10}}} %>
+<%= button_to "書かずに正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: true, sentence_id: @sentence.id, user_id: current_user.id}}} %>
+<%= button_to "書かずに不正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: false, sentence_id: @sentence.id, user_id: current_user.id}}} %>
 
 <%= link_to 'Back', sentence_path(Sentence.find_by_no(@sentence.no-1)) if @sentence.no != 1%>
 <%= link_to 'Next', sentence_path(Sentence.find_by_no(@sentence.no+1)) %>
