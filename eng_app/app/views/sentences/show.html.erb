@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="ja">
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -22,15 +24,22 @@
 <input type="button" value="答え非表示" onclick="hyoji1(1)">
 </form>
 
+<br>
+<input type="button" onclick="ring();" value="voice">
+<br>
+
 <p>
-  <strong>Voice data:</strong>
-  <%= @sentence.voice_data %>
+<audio id="test_sound" preload="none">
+  <source src="<%= @sentence.voice_data %>" type="audio/mp3">
+</audio>
 </p>
+
+
 
 <%= button_to "書かずに正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: true, sentence_id: @sentence.id, user_id: current_user.id}}} %>
 <%= button_to "書かずに不正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: false, sentence_id: @sentence.id, user_id: current_user.id}}} %>
-
 <br>
+
 
 <input type="text" size="<%= @sentence.en.size %>" name="text1" >
 <%= button_to "書いて正解", "/score_eng_writtens/", {method: :post, params: {:score_eng_written => {passed: true, sentence_id: @sentence.id, user_id: current_user.id}}} %>
@@ -54,4 +63,10 @@
       document.getElementById("disp").style.visibility="hidden";
     }
   }
+
+  function ring() {
+     document.getElementById("test_sound").play();
+  }
 </script>
+
+</html>

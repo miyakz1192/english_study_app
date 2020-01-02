@@ -27,7 +27,8 @@ File.open(sentence_file_path) do |f|
     no = s[0].to_i
     jp = s[1]
     en = s[2]
-    Sentence.create([{no: no, jp: jp, en: en}])
+    voice_data_path = sprintf("/voice/%03d.mp3",no)
+    Sentence.create([{no: no, jp: jp, en: en, voice_data: voice_data_path}])
     puts "INFO:   no #{no} is done"
   end
 end
