@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
   get 'accesses/hello'
   get 'accesses/goodbye'
+  get 'dashboard/index'
   resources :score_eng_not_writtens
   resources :score_eng_writtens
   resources :scores

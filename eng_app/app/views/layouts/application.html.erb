@@ -22,5 +22,14 @@
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
     <%= yield %>
+
+    <hr>
+    <footer>
+        <nav>
+          <%= link_to 'senences', sentences_path %>
+          <br>
+          <%= link_to 'dashboard', dashboard_index_path %>
+        </nav>
+    </footer>
   </body>
 </html>

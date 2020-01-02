@@ -5,6 +5,7 @@ class CreateScores < ActiveRecord::Migration[6.0]
       t.integer :val
       t.integer :sentence_id
       t.integer :user_id
+      t.string  :type
 
       t.timestamps
     end

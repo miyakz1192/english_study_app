@@ -42,10 +42,6 @@
 <%= link_to 'Back', sentence_path(Sentence.find_by_no(@sentence.no-1)) if @sentence.no != 1%>
 <%= link_to 'Next', sentence_path(Sentence.find_by_no(@sentence.no+1)) %>
 
-<hr>
-<br>
-<%= link_to 'list', sentences_path %>
-
 <script>
   function hyoji1(num)
   {
