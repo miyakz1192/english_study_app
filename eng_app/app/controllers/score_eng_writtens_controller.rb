@@ -69,6 +69,6 @@ class ScoreEngWrittensController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def score_eng_written_params
-      params.fetch(:score_eng_written, {})
+      params.fetch(:score_eng_written, {}).permit(:passed, :sentence_id, :user_id)
     end
 end
