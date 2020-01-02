@@ -155,8 +155,6 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
   miyakz@eng2:~/english_study_app/eng_app$ 
 
 
-
-
 カードモードの開発系譜
 ========================
 
@@ -179,10 +177,8 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
 6) 「書かずに正解」とか「書いて正解」を押した場合に、前ページに戻る
   0b4ff8b0da652c9e4f8a689083003bdbcde65bdd
   参考：https://qiita.com/azusanakano/items/8af1266f53a656ef787d
-　
-
-
-
+7) 「書いて正解」「書いて不正解」機能を実装
+  883e875d32c4cc1aaf2389ff4de97084b3fd2d87
 
 参考：パスの表示
 =======================
