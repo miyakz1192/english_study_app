@@ -14,6 +14,7 @@
         <nav>
         <% if user_signed_in? %>
             <%= link_to 'logout', destroy_user_session_path, method: :delete %>
+            <%= link_to 'edit', edit_user_registration_path %>
         <% else %>
             <%= link_to 'login', new_user_session_path %>
             <% end %>
@@ -22,5 +23,14 @@
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
     <%= yield %>
+
+    <hr>
+    <footer>
+        <nav>
+          <%= link_to 'senences', sentences_path %>
+          <br>
+          <%= link_to 'dashboard', dashboard_index_path %>
+        </nav>
+    </footer>
   </body>
 </html>

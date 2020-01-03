@@ -27,11 +27,12 @@ File.open(sentence_file_path) do |f|
     no = s[0].to_i
     jp = s[1]
     en = s[2]
-    Sentence.create([{no: no, jp: jp, en: en}])
+    voice_data_path = sprintf("/voice/%03d.mp3",no)
+    Sentence.create([{no: no, jp: jp, en: en, voice_data: voice_data_path}])
     puts "INFO:   no #{no} is done"
   end
 end
 
 puts "INFO:  initialize user data"
 User.destroy_all
-User.create!(name: ENV["INIT_USER_NAME"], email: ENV["INIT_USER_EMAIL"], password: ENV["INIT_USER_PASSWD"])
+User.create!(mode: ENV["INIT_USER_MODE"], email: ENV["INIT_USER_EMAIL"], password: ENV["INIT_USER_PASSWD"])
