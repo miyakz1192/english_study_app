@@ -6,7 +6,7 @@ class UserPresenter
 
   def user_setting_table_html
     settings = ""
-    user.configurable_settings.each do |i|
+    user.view_model.configurable_settings.each do |i|
       settings += "<td>#{i[:item]}</td>"
       settings += "<td>#{i[:value]}</td>"
       settings += "<td>#{i[:description]}</td>"
