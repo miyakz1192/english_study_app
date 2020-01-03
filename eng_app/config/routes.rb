@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
+  devise_scope :users do
+    # I can't use "users" in original controller name because devise already used
+    put 'user_conf/toggle_mode' => 'user_conf#toggle_mode', as: :toggle_mode
+  end
+
   get 'accesses/hello'
   get 'accesses/goodbye'
   get 'dashboard/index'

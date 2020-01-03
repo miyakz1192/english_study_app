@@ -1,4 +1,8 @@
+<% @presenter = UserPresenter.new(current_user) %>
+
 <h2>Edit <%= resource_name.to_s.humanize %></h2>
+
+<h3>Edit Basic setting </h3>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
@@ -35,6 +39,10 @@
     <%= f.submit "Update" %>
   </div>
 <% end %>
+
+<h3> User Mode Settings </h3>
+<%= @presenter.user_setting_table_html %>
+<%= button_to "toggle mode", toggle_mode_path, {method: :put} %>
 
 <h3>Cancel my account</h3>
 

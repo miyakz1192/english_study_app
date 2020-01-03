@@ -35,4 +35,4 @@ end
 
 puts "INFO:  initialize user data"
 User.destroy_all
-User.create!(name: ENV["INIT_USER_NAME"], email: ENV["INIT_USER_EMAIL"], password: ENV["INIT_USER_PASSWD"])
+User.create!(mode: ENV["INIT_USER_MODE"], email: ENV["INIT_USER_EMAIL"], password: ENV["INIT_USER_PASSWD"])
