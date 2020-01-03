@@ -29,6 +29,7 @@ User Sentence, Score各種を作って、db:migrateする。::
        --dep:dest->       <-dep:dest-- 
 
   ※  dependency:destroy Aが消えたらBも消える。
+  ※　ScoreEngWrittenとScoreEngNotWrittenも同様にUserとSentenceの関係を持つ。
 
 Sentenceを読み込む(初期データの投入)
 ==========================================
@@ -179,6 +180,11 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
   参考：https://qiita.com/azusanakano/items/8af1266f53a656ef787d
 7) 「書いて正解」「書いて不正解」機能を実装
   883e875d32c4cc1aaf2389ff4de97084b3fd2d87
+8) ダッシュボードの統計機能を実装
+　b691148ac0fe611398666b145aabc85042b370c6
+9) voiceを再生できるようにする。
+  a49e839d6050c07547279dbd42551ceb8f35cfe5
+  参考：https://allabout.co.jp/gm/gc/385187/
 
 参考：パスの表示
 =======================
@@ -353,11 +359,49 @@ https://tamamemo.hatenablog.com/entry/20120113/1326435969
         invoke  scss
   miyakz@eng2:~/english_study_app/eng_app$ 
 
-rails cの便利州
+rails cの便利集
 -------------------
 
 https://kzy52.com/entry/2014/11/28/235958
-  
+
+scopeを使うとビジネスロジックを簡潔にmodelに収めることができる
+--------------------------------------------------------------------
+
+https://qiita.com/ngron/items/14a39ce62c9d30bf3ac3
+
+viewとControllerにビジネスロジックを書かない
+------------------------------------------------
+
+https://qiita.com/lastcat_/items/f002eeb482319ed21163
+
+Viewに関するロジックをmodelから追い出して、ViewModelとPresenterに寄せよう
+----------------------------------------------------------------------------
+
+Decoratorとpresenterの基本解説
+
+https://tech.kitchhike.com/entry/2018/02/28/221159
+
+以下のURLもわかりやすい。
+
+https://qiita.com/KentFujii/items/02fa3e4933a7c54e7016
+
+以下、引用。::
+
+  Rubyでhtmlを生成するというプロセスなので、テンプレートエンジンよりRubyの良さを活かしやすい(例えば継承してコードを使いまわすとか)ですが、presenter最大のメリットはhtmlの塊に名前をつけて管理できるところだと思います。それだけでこのviewはどういう意図があるのか？がより理解しやすくなるので。
+
+なお、presenterは単なるデザインパターンであり、それを実現するためのgemとかは無いらしい。
+ちなみに、app/modelsと同じ階層にpresentersディレクトリを作るのが主流？
+
+https://tech.unifa-e.com/entry/2017/08/03/192008
+
+Deviseのroutingのコンフィグ
+-------------------------------
+
+http://katahirado.hatenablog.com/entry/2014/08/16/180718
+
+https://qiita.com/chamao/items/de00920c343a3e237d20
+
+https://www.tmp1024.com/articles/devise-scope-and-path
 
 
 参考：
