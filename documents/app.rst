@@ -189,7 +189,9 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
   5c03fbfea327a8070488740ce56419399a422247
 12) 外部への公開
   cd7d84864b2b07ba19bd6e37ce24bb054e1dbe13　
-11) セキュリティの考慮
+13) スマホ対応
+  074591fe4cad3b00efd80c34d7b6cfff8a8e36f2
+14) セキュリティの考慮
   xxxx
 
 
