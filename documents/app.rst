@@ -187,6 +187,11 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
   参考：https://allabout.co.jp/gm/gc/385187/
 10) sentenceのリストをkaminariで加工する
   5c03fbfea327a8070488740ce56419399a422247
+12) 外部への公開
+  cd7d84864b2b07ba19bd6e37ce24bb054e1dbe13　
+11) セキュリティの考慮
+  xxxx
+
 
 参考：パスの表示
 =======================
@@ -265,8 +270,35 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
               update_rails_disk_service PUT    /rails/active_storage/disk/:encoded_token(.:format)                                      active_storage/disk#update
                    rails_direct_uploads POST   /rails/active_storage/direct_uploads(.:format)                                           active_storage/direct_uploads#create
   miyakz@eng2:~/english_study_app/eng_app$ 
-  
 
+サービスの外部公開
+========================
+
+lily2の中のVMとしてeng2サーバが立ち上がっており、それを外部からHTTPアクセスできるようにしたい。
+NATをlily2に設定する必要があるのだが、NATに関しては以下のページが大変わかり易い。
+
+参考:https://www.turbolinux.co.jp/products/server/11s/user_guide/x9637.html
+
+eng2:192.168.122.6
+lily2: 192.168.0.2,192.168.122.1
+
+192.168.0.2がインターネットに接続するためのサブネット。
+192.168.122.0/24がvirbr0。
+
+すでに、KVMによってvirbr0はNATされているので、lily2のiptablesにはたくさん
+192.168.122.0/24に関するNATルールが設定されている。
+したがって、192.168.122.6(eng2)に関するルールは優先的(No1)にしておかないと、
+意図どおりに動作しない。
+
+結論からいうと、以下のiptablesが必要。::
+
+  miyakz@lily2:~/documents/linux_tips/iptables$ ./do.sh 
+  ++ sudo iptables -t nat -I PREROUTING 1 -d 192.168.0.2 -j DNAT --to-destination 192.168.122.6
+  ++ sudo iptables -t nat -I POSTROUTING 1 -d 192.168.122.6 -j SNAT --to-source 192.168.122.1
+  ++ sudo iptables -I FORWARD 1 -d 192.168.122.6 -j ACCEPT
+  miyakz@lily2:~/documents/linux_tips/iptables$ 
+
+参考URLにあるとおり、PREROUTING,POSTROUTING,FORWARDそれぞれのチェインにデータを入れる必要がある。
 
 テストデータ
 =================
@@ -404,6 +436,11 @@ http://katahirado.hatenablog.com/entry/2014/08/16/180718
 https://qiita.com/chamao/items/de00920c343a3e237d20
 
 https://www.tmp1024.com/articles/devise-scope-and-path
+
+Deviseの本家ページ
+---------------------
+
+https://github.com/plataformatec/devise
 
 rubyのcaseは表現力が強力
 ----------------------------
