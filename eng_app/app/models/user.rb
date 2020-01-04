@@ -1,3 +1,5 @@
+require "view_model/user_view_model.rb"
+
 module UserActionMode
   NORMAL = "normal"
   WORST  = "worst"
@@ -13,15 +15,9 @@ class User < ApplicationRecord
   has_many :score_eng_not_writtens
 
   include UserActionMode
+  include ViewModelBase
 
   before_create do
     self.mode = UserActionMode::NORMAL if self.mode.blank?
-  end
-
-
-  #returns configurable setting name and values hash
-  #return array of hash
-  def configurable_settings
-    [{item: "mode", value: self.mode, description: "sentence sequence based on normal(nodemal mode), worst(worst mode)"}]
   end
 end

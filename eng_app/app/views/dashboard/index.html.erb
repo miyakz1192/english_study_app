@@ -1,74 +1,8 @@
 <h1>English study Dashboard</h1>
 
-<% for type in [Score, ScoreEngNotWritten, ScoreEngWritten] do %>
-  <h2>achievement index of <%= type %></h2>
-  <table>
-    <thead>
-      <tr>
-        <th>greater_than_one_score_sentence_count</th>
-        <th>all sentences</th>
-        <th>achievement percent</th>
-        <th colspan="3"></th>
-      </tr>
-    </thead>
+<% init %>
 
-    <tbody>
-        <tr>
-          <td><%= greater_than_one_score_sentence_count(type) %></td>
-          <td><%= all_sentence_count %></td>
-          <td><%= achievement_percent(type) %></td>
-        </tr>
-    </tbody>
-  </table>
-<% end %>
+<%= @dp.achievement_index_table %>
+<%= @dp.top_x_good_score_sentences_table(5) %>
+<%= @dp.top_x_worst_score_sentences_table(5) %>
 
-
-<h2>Worst 5 bad score Sentences</h2>
-<table>
-  <thead>
-    <tr>
-      <th>No</th>
-      <th>Jp</th>
-      <th>Voice data</th>
-      <th>score</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% worst(5).each do |sentence, score| %>
-      <tr>
-        <td><%= sentence.no %></td>
-        <td><%= sentence.jp %></td>
-        <td><%= sentence.voice_data %></td>
-        <td><%= score %></td>
-        <td><%= link_to 'Show', sentence %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<h2>Top 5 good score Sentences</h2>
-<table>
-  <thead>
-    <tr>
-      <th>No</th>
-      <th>Jp</th>
-      <th>Voice data</th>
-      <th>score</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% top(5).each do |sentence, score| %>
-      <tr>
-        <td><%= sentence.no %></td>
-        <td><%= sentence.jp %></td>
-        <td><%= sentence.voice_data %></td>
-        <td><%= score %></td>
-        <td><%= link_to 'Show', sentence %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>

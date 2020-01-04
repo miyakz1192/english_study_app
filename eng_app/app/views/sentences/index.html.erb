@@ -7,19 +7,17 @@
     <tr>
       <th>No</th>
       <th>Jp</th>
-      <th>Voice data</th>
       <th>score</th>
       <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
-    <% @sentences.each do |sentence| %>
+    <% @sentences.each do |sentence, score| %>
       <tr>
         <td><%= sentence.no %></td>
         <td><%= sentence.jp %></td>
-        <td><%= sentence.voice_data %></td>
-        <td><%= sentence.scores.sum(:val) %></td>
+        <td><%= score %></td>
         <td><%= link_to 'Show', sentence %></td>
       </tr>
     <% end %>
