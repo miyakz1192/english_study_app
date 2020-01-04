@@ -185,6 +185,8 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
 9) voiceを再生できるようにする。
   a49e839d6050c07547279dbd42551ceb8f35cfe5
   参考：https://allabout.co.jp/gm/gc/385187/
+10) sentenceのリストをkaminariで加工する
+  5c03fbfea327a8070488740ce56419399a422247
 
 参考：パスの表示
 =======================
@@ -402,6 +404,11 @@ http://katahirado.hatenablog.com/entry/2014/08/16/180718
 https://qiita.com/chamao/items/de00920c343a3e237d20
 
 https://www.tmp1024.com/articles/devise-scope-and-path
+
+rubyのcaseは表現力が強力
+----------------------------
+
+https://melborne.github.io/2013/02/25/i-wanna-say-something-about-rubys-case/
 
 
 参考：
