@@ -13,11 +13,11 @@
   </thead>
 
   <tbody>
-    <% @sentences.each do |sentence| %>
+    <% @sentences.each do |sentence, score| %>
       <tr>
         <td><%= sentence.no %></td>
         <td><%= sentence.jp %></td>
-        <td><%= sentence.scores.sum(:val) %></td>
+        <td><%= score %></td>
         <td><%= link_to 'Show', sentence %></td>
       </tr>
     <% end %>

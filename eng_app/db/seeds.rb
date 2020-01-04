@@ -35,4 +35,11 @@ end
 
 puts "INFO:  initialize user data"
 User.destroy_all
-User.create!(mode: ENV["INIT_USER_MODE"], email: ENV["INIT_USER_EMAIL"], password: ENV["INIT_USER_PASSWD"])
+u = User.create!(mode: ENV["INIT_USER_MODE"], email: ENV["INIT_USER_EMAIL"], password: ENV["INIT_USER_PASSWD"])
+
+puts "INFO:  initialize score data"
+Score.destroy_all
+Sentence.all.each do |s|
+  Score.create!(passed: false, val: 0, sentence_id: s.id, user_id: u.id)
+  puts "INFO:   no #{s.no} is done"
+end

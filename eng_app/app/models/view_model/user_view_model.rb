@@ -10,18 +10,40 @@ require 'bigdecimal'
     def configurable_settings
       [{item: "mode", value: @user.mode, description: "sentence sequence based on normal(nodemal mode), worst(worst mode)"}]
     end
-    #top(num) return top X of sentence and score as Hash
-    #key(sentence) value(score)
-    def top(num)
-      n = num - 1
-      Hash[@user.scores.group(:sentence).sum(:val).sort_by{|_,v| -v}[0..n]]
+    #top(num) return top X of sentence and score as Array of Array 
+    #Element of Array is [sentence, score]
+    def top(num = nil)
+      temp = @user.scores.group(:sentence).sum(:val).sort_by{|_,v| -v}
+      if num
+        n = num - 1
+        return temp[0..n]
+      else 
+        return temp
+      end
     end
 
-    #worst(num) return worst X of sentence and score as Hash
-    #key(sentence) value(score)
-    def worst(num)
-      n = num - 1
-      Hash[@user.scores.group(:sentence).sum(:val).sort_by{|_,v| +v}[0..n]]
+    #worst(num) return top X of sentence and score as Array of Array 
+    #Element of Array is [sentence, score]
+    def worst(num = nil)
+      temp = @user.scores.group(:sentence).sum(:val).sort_by{|_,v| +v}
+      if num
+        n = num - 1
+        return temp[0..n]
+      else 
+        return temp
+      end
+    end
+
+    #return sentences as Array of Array based on user's mode
+    def sentences
+      case @user.mode
+      when UserActionMode::NORMAL
+        top
+      when UserActionMode::WORST
+        worst
+      else 
+        raise "ERROR: no such pattern"
+      end
     end
 
     def greater_than_one_score_sentence_count(type = Score)
