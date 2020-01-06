@@ -298,9 +298,10 @@ lily2: 192.168.0.2,192.168.122.1
 結論からいうと、以下のiptablesが必要。::
 
   miyakz@lily2:~/documents/linux_tips/iptables$ ./do.sh 
-  ++ sudo iptables -t nat -I PREROUTING 1 -d 192.168.0.2 -j DNAT --to-destination 192.168.122.6
-  ++ sudo iptables -t nat -I POSTROUTING 1 -d 192.168.122.6 -j SNAT --to-source 192.168.122.1
-  ++ sudo iptables -I FORWARD 1 -d 192.168.122.6 -j ACCEPT
+  set -x
+  sudo iptables -t nat -I PREROUTING  1 -p tcp -d 192.168.0.2   --dport 3000 -j DNAT --to-destination 192.168.122.6:3000
+  sudo iptables -t nat -I POSTROUTING 1 -p tcp -d 192.168.122.6 --dport 3000 -j SNAT --to-source 192.168.122.1
+  sudo iptables        -I FORWARD     1 -p tcp -d 192.168.122.6 --dport 3000 -j ACCEPT
   miyakz@lily2:~/documents/linux_tips/iptables$ 
 
 参考URLにあるとおり、PREROUTING,POSTROUTING,FORWARDそれぞれのチェインにデータを入れる必要がある。
