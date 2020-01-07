@@ -189,8 +189,13 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
   5c03fbfea327a8070488740ce56419399a422247
 12) 外部への公開
   cd7d84864b2b07ba19bd6e37ce24bb054e1dbe13　
-11) セキュリティの考慮
+13) スマホ対応
+  074591fe4cad3b00efd80c34d7b6cfff8a8e36f2
+14) セキュリティの考慮
   xxxx
+15) rails s自動起動(サービスとして)
+  参考：https://qiita.com/tkato/items/6a227e7c2c2bde19521c
+　参考：https://superuser.com/questions/1098167/how-to-run-service-not-as-root
 
 
 参考：パスの表示
@@ -293,9 +298,10 @@ lily2: 192.168.0.2,192.168.122.1
 結論からいうと、以下のiptablesが必要。::
 
   miyakz@lily2:~/documents/linux_tips/iptables$ ./do.sh 
-  ++ sudo iptables -t nat -I PREROUTING 1 -d 192.168.0.2 -j DNAT --to-destination 192.168.122.6
-  ++ sudo iptables -t nat -I POSTROUTING 1 -d 192.168.122.6 -j SNAT --to-source 192.168.122.1
-  ++ sudo iptables -I FORWARD 1 -d 192.168.122.6 -j ACCEPT
+  set -x
+  sudo iptables -t nat -I PREROUTING  1 -p tcp -d 192.168.0.2   --dport 3000 -j DNAT --to-destination 192.168.122.6:3000
+  sudo iptables -t nat -I POSTROUTING 1 -p tcp -d 192.168.122.6 --dport 3000 -j SNAT --to-source 192.168.122.1
+  sudo iptables        -I FORWARD     1 -p tcp -d 192.168.122.6 --dport 3000 -j ACCEPT
   miyakz@lily2:~/documents/linux_tips/iptables$ 
 
 参考URLにあるとおり、PREROUTING,POSTROUTING,FORWARDそれぞれのチェインにデータを入れる必要がある。
@@ -446,6 +452,72 @@ rubyのcaseは表現力が強力
 ----------------------------
 
 https://melborne.github.io/2013/02/25/i-wanna-say-something-about-rubys-case/
+
+セキュリティの実装
+========================
+
+検討する実装。仕様はmemo.rstを参照。
+DeviseのFailureAppを使おうと思う。
+これを使ってログイン失敗時をフックして、失敗したIPアドレスをDBに記録するため。
+
+心配なのは、FailureAppを使うことで、Deviseデフォルトの挙動を上書きしないかということ。
+今回はログ出力程度の話なので、デフォルト挙動は変更したくない。
+
+以下が、DeviseのoriginalのFailureAppだと思う。
+
+ /var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/failure_app.rb
+
+FailureAppを参照している箇所は以下。::
+  
+  miyakz@eng2:~$ grep -rn FailureApp /var/lib/gems/2.5.0/gems/devise-4.7.1/*
+  /var/lib/gems/2.5.0/gems/devise-4.7.1/CHANGELOG.md:64:  *  Allow people to extend devise failure app, through invoking `ActiveSupport.run_load_hooks` once `Devise::FailureApp` is loaded (by @wnm)
+  /var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise.rb:14:  autoload :FailureApp,         'devise/failure_app'
+  /var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/mapping.rb:124:      @failure_app = options[:failure_app] || Devise::FailureApp
+  /var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/delegator.rb:15:      app || Devise::FailureApp
+  /var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/failure_app.rb:10:  class FailureApp < ActionController::Metal
+  miyakz@eng2:~$ 
+  
+以下、defaultのFalureAppを決定するところ。
+/var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/mapping.rb:::
+
+    def default_failure_app(options)
+      @failure_app = options[:failure_app] || Devise::FailureApp
+      if @failure_app.is_a?(String)
+        ref = Devise.ref(@failure_app)
+        @failure_app = lambda { |env| ref.get.call(env) }
+      end
+    end
+
+上書きしてしまう動作のようなので、Devise::FailureAppを継承したFailureAppを定義して
+それを使ったほうが良さそう。定義の場所は以下。::
+
+  /var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/failure_app.rb:10:  class FailureApp < ActionController::Metal
+
+それは以下に記載(本家)。::
+
+  https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
+
+以下のページにもズバリで記載している。::
+
+  https://stackoverflow.com/questions/12873957/devise-log-after-auth-failure/33230548
+
+  class LogAuthenticationFailure < Devise::FailureApp
+    def respond
+      if request.env.dig('warden.options', :action) == 'unauthenticated'
+        Rails.logger.info('...')
+      end
+      super
+    end
+  end
+
+rails6バージョンではもっと簡単にアクセスできるようだ。::
+
+  request.env["warden"].authenticate?
+  参考：　/var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/rails/routes.rb
+
+本家のページにも記載されている手順で実装すれば、なんとかなりそう。
+
+
 
 
 参考：
