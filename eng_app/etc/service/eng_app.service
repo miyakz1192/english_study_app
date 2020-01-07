@@ -1,0 +1,14 @@
+[Unit]
+Description = English App unit file.
+After=network-online.target
+ConditionPathExists=/home/miyakz/english_study_app/eng_app
+
+[Service]
+ExecStart=/home/miyakz/english_study_app/eng_app/bin/start.sh
+Restart=no
+Type=simple
+User=miyakz
+
+
+[Install]
+WantedBy=multi-user.target
