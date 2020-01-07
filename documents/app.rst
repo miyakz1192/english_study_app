@@ -194,6 +194,7 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
 14) セキュリティの考慮
   xxxx
 15) rails s自動起動(サービスとして)
+  5aeda7b936b3b24c58decaf259515f706fe00c26
   参考：https://qiita.com/tkato/items/6a227e7c2c2bde19521c
 　参考：https://superuser.com/questions/1098167/how-to-run-service-not-as-root
 
@@ -516,8 +517,6 @@ rails6バージョンではもっと簡単にアクセスできるようだ。::
   参考：　/var/lib/gems/2.5.0/gems/devise-4.7.1/lib/devise/rails/routes.rb
 
 本家のページにも記載されている手順で実装すれば、なんとかなりそう。
-
-
 
 
 参考：
