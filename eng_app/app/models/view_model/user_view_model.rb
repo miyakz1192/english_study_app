@@ -46,6 +46,32 @@ require 'bigdecimal'
       end
     end
 
+    def sentences_with_pagenate(page, per)
+      Kaminari.paginate_array(sentences).page(page).per(per)
+    end
+
+    def prev_sentence(_sentence)
+      sent = sentences
+      max = sent.count
+      i = sent.index{|sentence, val| sentence.no == _sentence.no}
+      if i - 1 < 0 
+        sent[max - 1]
+      else
+        sent[i - 1]
+      end
+    end
+
+    def next_sentence(_sentence)
+      sent = sentences
+      max = sent.count
+      i = sent.index{|sentence, val| sentence.no == _sentence.no}
+      if i + 1 < max
+        sent[i + 1]
+      else
+        sent[0]
+      end
+    end
+
     def greater_than_one_score_sentence_count(type = Score)
       cond = {}
       cond = {type: type} if type != Score

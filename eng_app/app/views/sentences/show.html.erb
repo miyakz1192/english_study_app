@@ -8,6 +8,11 @@
 </p>
 
 <p>
+  <strong>Score:</strong>
+  <%= @sentence.score_with(current_user) %>
+</p>
+
+<p>
   <strong>Jp:</strong>
   <%= @sentence.jp %>
 </p>
@@ -48,8 +53,8 @@
 <br>
 
 
-<%= link_to 'Back', sentence_path(Sentence.find_by_no(@sentence.no-1)) if @sentence.no != 1%>
-<%= link_to 'Next', sentence_path(Sentence.find_by_no(@sentence.no+1)) %>
+<%= link_to 'Prev', sentence_path(current_user.view_model.prev_sentence(@sentence)) %>
+<%= link_to 'Next', sentence_path(current_user.view_model.next_sentence(@sentence)) %>
 
 <script>
   function hyoji1(num)

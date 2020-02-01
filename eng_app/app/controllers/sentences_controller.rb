@@ -7,7 +7,7 @@ class SentencesController < ApplicationController
   # GET /sentences
   # GET /sentences.json
   def index
-    @sentences = Kaminari.paginate_array(current_user.view_model.sentences).page(params[:page]).per(PER)
+    @sentences = current_user.view_model.sentences_with_pagenate(params[:page], PER)
   end
 
   # GET /sentences/1
