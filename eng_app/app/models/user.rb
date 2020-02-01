@@ -2,6 +2,7 @@ require "view_model/user_view_model.rb"
 
 module UserActionMode
   NORMAL = "normal"
+  TOP    = "top"
   WORST  = "worst"
 end
 

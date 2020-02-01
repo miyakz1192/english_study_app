@@ -3,18 +3,13 @@ class UserConfController < ApplicationController
 
   def toggle_mode
     @user = current_user
-    if @user.mode == UserActionMode::NORMAL
-      mode = UserActionMode::WORST
-    else
-      mode = UserActionMode::NORMAL
-    end
-
-    if @user.update({:mode => mode})
+    if @user.update({:mode => next_mode(@user)})
       redirect_to :edit_user_registration
     else
       @user.errors 
     end
   end
+
 
   def update
     update_aux(params)
@@ -25,6 +20,20 @@ class UserConfController < ApplicationController
   end
 
 private
+  def next_mode(user)
+    @user = current_user
+    case @user.mode
+    when UserActionMode::NORMAL
+      return UserActionMode::TOP
+    when UserActionMode::TOP
+      return UserActionMode::WORST
+    when UserActionMode::WORST
+      return UserActionMode::NORMAL
+    else
+      return UserActionMode::NORMAL
+    end
+  end
+
   def update_aux(parameters)
     respond_to do |format|
       if @user.update(parameters)
