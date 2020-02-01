@@ -42,12 +42,14 @@
 
 
 <%= button_to "書かずに正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: true, sentence_id: @sentence.id, user_id: current_user.id}}} %>
+<br>
 <%= button_to "書かずに不正解", "/score_eng_not_writtens/", {method: :post, params: {:score_eng_not_written => {passed: false, sentence_id: @sentence.id, user_id: current_user.id}}} %>
 <br>
 
 
 <input type="text" size="<%= @sentence.en.size %>" name="text1" >
 <%= button_to "書いて正解", "/score_eng_writtens/", {method: :post, params: {:score_eng_written => {passed: true, sentence_id: @sentence.id, user_id: current_user.id}}} %>
+<br>
 <%= button_to "書いて不正解", "/score_eng_writtens/", {method: :post, params: {:score_eng_written => {passed: false, sentence_id: @sentence.id, user_id: current_user.id}}} %>
 
 <br>
@@ -58,9 +60,14 @@
   <%= submit_tag("Go!") %>
 <% end %>
 
+<br>
+<hr>
 
-<%= link_to 'Prev', sentence_path(current_user.view_model.prev_sentence(@sentence)) %>
+<%= link_to 'Prev', sentence_path(current_user.view_model.prev_sentence(@sentence)) %>    
 <%= link_to 'Next', sentence_path(current_user.view_model.next_sentence(@sentence)) %>
+
+<br>
+<br>
 
 <script>
   function hyoji1(num)
