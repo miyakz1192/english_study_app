@@ -21,7 +21,7 @@ require 'bigdecimal'
     #normal(num) return normal(without considering score, only order of number) X of sentence and score as Array of Array 
     #Element of Array is [sentence(object), score(int)]
     def normal(num = nil)
-      temp = Sentence.joins(:scores).where("scores.user_id=#{@user.id}").sort_by{|a| a.no.to_i}.uniq{|a| a.no}
+      temp = @user.scores.group(:sentence).sum(:val).sort_by{|sentence,val| sentence.no.to_i}
       filter_by_num(temp, num)
     end
 
