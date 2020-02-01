@@ -24,6 +24,19 @@ class SentencesController < ApplicationController
   def edit
   end
 
+  # GET /sentences/search
+  def search
+    @sentence = Sentence.find_by_no(params[:no])
+    respond_to do |format|
+      if @sentence
+        format.html { redirect_to @sentence, notice: '' }
+      else
+        @sentence = Sentence.find_by_no(1)
+        format.html { redirect_to @sentence, notice: '' }
+      end
+    end
+  end
+
   # POST /sentences
   # POST /sentences.json
   def create

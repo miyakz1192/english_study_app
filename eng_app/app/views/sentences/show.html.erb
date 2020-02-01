@@ -52,6 +52,12 @@
 
 <br>
 
+<%= form_tag({controller: "sentences", action: "search"}, method: "get") do %>
+  <%= label_tag(:no, "sentence no") %>
+  <%= text_field_tag(:no) %>
+  <%= submit_tag("Go!") %>
+<% end %>
+
 
 <%= link_to 'Prev', sentence_path(current_user.view_model.prev_sentence(@sentence)) %>
 <%= link_to 'Next', sentence_path(current_user.view_model.next_sentence(@sentence)) %>
