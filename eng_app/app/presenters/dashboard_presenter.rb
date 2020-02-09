@@ -3,6 +3,33 @@ class DashboardPresenter
     @vm = user.view_model
   end
 
+  def all_try_index_table
+    temp = ""
+    temp += <<-EOS
+      <h2>all try index</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>all try count</th>
+            <th>all sentences</th>
+            <th>achievement percent</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+    
+        <tbody>
+            <tr>
+              <td>#{@vm.all_try_count}</td>
+              <td>#{@vm.all_sentence_count}</td>
+              <td>#{@vm.all_try_percent}</td>
+            </tr>
+        </tbody>
+      </table>
+    EOS
+    temp.html_safe
+  end
+
+
   def achievement_index_table
     temp = ""
     for type in [Score, ScoreEngNotWritten, ScoreEngWritten] do 

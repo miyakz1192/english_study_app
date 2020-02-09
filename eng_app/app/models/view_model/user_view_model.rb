@@ -72,9 +72,27 @@ require 'bigdecimal'
       end
     end
 
+    def all_try_count
+      @user.scores.group(:sentence).count.select{|sentence, count| count > 1}.count
+    end
+
+    def all_try_percent
+      temp = (all_try_count.to_f/all_sentence_count.to_f) * 100
+      BigDecimal(temp.to_s).floor(2).to_f
+    end
+
     def greater_than_one_score_sentence_count(type = Score)
       cond = {}
       cond = {type: type} if type != Score
+
+      if type == Score
+        res = 0
+        for t in [ScoreEngNotWritten, ScoreEngWritten]
+          cond = {type: t}
+          res += @user.scores.where(cond).group(:sentence).sum(:val).select{|s,val| val >= 1}.count
+        end
+        return res
+      end
       @user.scores.where(cond).group(:sentence).sum(:val).select{|s,val| val >= 1}.count
     end
 
