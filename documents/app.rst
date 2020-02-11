@@ -197,6 +197,8 @@ config/initializers/devise.rbに以下のコードを追記し、カスタマイ
   5aeda7b936b3b24c58decaf259515f706fe00c26
   参考：https://qiita.com/tkato/items/6a227e7c2c2bde19521c
 　参考：https://superuser.com/questions/1098167/how-to-run-service-not-as-root
+16) モードを整理する(normal/top/worst)にする
+17) nextとbackボタンを現在のモードの動作にする
 
 
 参考：パスの表示
@@ -341,6 +343,35 @@ ScoreEngWritten.create(passed: false, sentence: s[4], user: u)
 #s[5] is -1 points
 ScoreEngNotWritten.create(passed: true, sentence: s[5], user: u)
 ScoreEngWritten.create(passed: false, sentence: s[5], user: u)
+
+バックアップ・リストア
+===========================================
+
+以下をGemfileに記載して、sudo bundle install::
+  gem 'rails-backup-migrate'
+
+以下のような感じで、rake site:backupを打てば、site-backup.tgzができる。これを移行先にてrake site:restoreで
+読み込ませるだけ。簡単。以下、backupの実行結果例(restoreはまだ試していない)::
+
+  miyakz@eng2:~/english_study_app/eng_app$ rake site:backup
+  miyakz@eng2:~/english_study_app/eng_app$ ls
+  Gemfile       README.md  app              bin     config.ru  etc  log           package.json       public           storage  tmp     yarn.lock
+  Gemfile.lock  Rakefile   babel.config.js  config  db         lib  node_modules  postcss.config.js  site-backup.tgz  test     vendor
+  miyakz@eng2:~/english_study_app/eng_app$ mv site-backup.tgz  /tmp/
+  miyakz@eng2:~/english_study_app/eng_app$ cd /tmp/
+  miyakz@eng2:/tmp$ tar xvfz site-backup.tgz 
+  db/schema.rb
+  db/backup/
+  db/backup/users.yml
+  db/backup/scores.yml
+  db/backup/sentences.yml
+  db/backup/ar_internal_metadata.yml
+  miyakz@eng2:/tmp$ 
+  
+  
+参考：
+
+https://coderwall.com/p/vb33aq/backup-your-rails-db
 
 小ネタ
 ===========================================
