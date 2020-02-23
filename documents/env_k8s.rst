@@ -12,9 +12,11 @@ https://github.com/miyakz1192/dockerfiles
 全体像
 -------
 
-railsイメージ：ubuntu 19.10イメージをベースに、rails6.0をインストールしたもの。
-eng_app_baseイメージ：railsイメージをベースに、eng_appと関連gemをbundle installしたもの。
-eng_appイメージ：eng_app_baseイメージをベースに、最新のeng_appソースをgit pullして動作するベースとなるイメージ。
+imageの全体像は以下の通り。::
+
+  railsイメージ：ubuntu 19.10イメージをベースに、rails6.0をインストールしたもの。
+  eng_app_baseイメージ：railsイメージをベースに、eng_appと関連gemをbundle installしたもの。
+  eng_appイメージ：eng_app_baseイメージをベースに、最新のeng_appソースをgit pullして動作するベースとなるイメージ。
 
 DBとして、mysqlのDBイメージをk8sから直接利用。これは、k8sマニフェストファイルの所で別途解説。
 あと、eng_appを動作させるマニフェストファイルがある。後述する。
@@ -91,25 +93,30 @@ https://github.com/miyakz1192/documents.git
 
 cloud_native_study/k8s_ope/eng_app
 
+なお、PVとPVCは同一レポジトリの以下のディレクトリで管理。
+
+cloud_native_study/k8s_ope/pv/eng_app
+
 全体像。
 -----------
 
-以下のファイルが存在する。
+以下のファイルが存在する。::
 
   deployment-eng-app-app.yaml : eng-app本体のマニフェスト
   deployment-eng-app-mysql.yaml : eng-appが使うMySQLのマニフェスト    
   eng_app_secret.yaml           : eng-appとMySQLに関連する設定ファイル(パスワードとか含むためsecretあつかい)。こちらはgitにupしない。
   eng_app_secret_sample.yaml    : 上記のサンプルファイル(gitにupしている)   
-  
-PVも必要で以下。
-
 
 コンテナポートの設定。::
   eng-app本体：3000
   mysql:3306
   
+PVも必要で以下。::
 
+  eng_app.yaml:  eng-app-mysql用のPV定義
+  eng_app_pvc.yaml: eng-app-mysql用のPVC定義
 
+  
 deployment-eng-app-app.yaml
 --------------------------------
 
@@ -225,8 +232,85 @@ secretファイル。::
 MYSQL_*はeng-app-mysqlのための環境変数。docker.io/mysqlの仕様により、
 MYSQLを動作させるrootユーザのパスワードを指定する。
 
-DATABASE_*はeng_appの環境変数。DATABASE_DEV_PASSWORDは任意の値が
-指定できるが、docker.io/mysqlを使用するため、rootで固定。
+DATABASE_*はeng_appの環境変数。
+
+DATABASE_DEV_HOSTはeng_appの接続先のDBのホスト名。
+
+DATABASE_DEV_USERはDBのユーザ名。
+
+DATABASE_DEV_PASSWORDは任意の値が指定できるが、docker.io/mysqlを使用するため、rootで固定。
+
+INIT_USER_MODEはnormal固定で良い。
+
+INIT_USER_EMAILは初期ユーザのemailアドレス。
+
+INIT_USER_PASSWDは初期ユーザのパスワード。適当に指定する。
+
+
+PV:eng_app.yaml
+----------------
+
+eng_appのPVを指定する。::
+
+  root@kubecon1:~/documents/cloud_native_study/k8s_ope/pv/eng_app# cat eng_app.yaml 
+  # halyardについてはclaimが無いのだが、一応、以下で作っておく。
+  # disk: 10Gi
+  # ReadWriteOnce
+  # セキュリティコンテキスト
+  #  fsGroup:1000
+  #  runAsUser: 1000
+  # 上記値は過去の経験値から
+  # 一応、根拠としてはvalues.yamlから	
+  
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: eng-app
+    namespace: eng-app
+  spec:
+    capacity:
+      storage: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    # PersistentVolumeClaim を削除した時の動作
+    persistentVolumeReclaimPolicy: Recycle
+  #  storageClassName: slow
+    mountOptions:
+      - hard
+    ## マウント先のNFS Serverの情報を記載
+    nfs:
+      path: /opt/nfs/eng_app
+      server: pvserver
+  root@kubecon1:~/documents/cloud_native_study/k8s_ope/pv/eng_app# 
+
+ディスクの容量は10Gi。モードはReadWriteOnce(同時に1つのコンテナのみマウント可能)。
+ポイントは、nfs限定にしており、NFSサーバでのパスとNFSサーバ名を明確に指定している
+
+PVC:eng_app_pvc.yaml
+-------------------------
+
+PVCを指定する。::
+
+  root@kubecon1:~/documents/cloud_native_study/k8s_ope/pv/eng_app# cat eng_app_pvc.yaml 
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: eng-app-pvc
+    namespace: eng-app
+  spec:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+  root@kubecon1:~/documents/cloud_native_study/k8s_ope/pv/eng_app# 
+
+ポイントは10Gi、ReadWriteOnceのストレージを要求する。
+なお、namespace eng-appにて、PVは１つ、PVCは１つなため、自動的に、
+PV-PVCがマッチングする。
+  
+
+
 
 
 
