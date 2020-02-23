@@ -1,5 +1,5 @@
 #!/bin/bash
 cd /home/miyakz/english_study_app/eng_app
-rails s -b=192.168.122.6
+rails s -b=0.0.0.0
 cd -
 
