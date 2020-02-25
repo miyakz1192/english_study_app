@@ -85,8 +85,8 @@ eng_appイメージ。
 最新のソースをpullして、動作するだけ。
 
 
-マニフェストファイル。
-=============================
+マニフェストファイル(k8s/istio)
+================================
 
 以下のレポジトリに配置。
 
@@ -108,17 +108,21 @@ cloud_native_study/k8s_ope/pv/eng_app
   【k8s関連リソース】
   deployment-eng-app-app.yaml : eng-app本体のマニフェスト(DeploymentとServiceの定義)
   deployment-eng-app-mysql.yaml : eng-appが使うMySQLのマニフェスト(DeploymentとServiceの定義)    
-  eng_app_secret.yaml           : eng-appとMySQLに関連する設定ファイル(パスワードとか含むためsecretあつかい)。こちらはgitにupしない。
+  eng_app_secret.yaml           : eng-appとMySQLに関連する設定ファイル(パスワードとか含むためsecretあつかい)。
+                                  こちらはgitにupしない。
   eng_app_secret_sample.yaml    : 上記のサンプルファイル(gitにupしている)   
 
   【ネット(istio)関連のリソース】
   eng_app_gateway.yaml : eng-app-app用のistio gatewayの定義。門番みたいなもの。      
-  eng_app_virtual_service.yaml: eng-app-app-service用のistio VirtualService(eng-app-virtual-service) 。k8sのServiceの機能豊富版。
+  eng_app_virtual_service.yaml: eng-app-app-service用のistio VirtualService(eng-app-virtual-service) 。
+                                k8sのServiceの機能豊富版。
   eng_app_destination_rules.yaml: eng-app-virtual-service用の各podへのルーティングルール
   
 コンテナポートの設定。::
   eng-app本体：3000
   mysql:3306
+  外部からのアクセス方法： NodePortAddress:PortNum →　http://192.168.100.2:31380
+                           istio-gatewayによって、31380が80(eng-app-gateway/eng-app-virtual-service)にマッピングされる。
   
 PVも必要で以下。::
 
@@ -129,21 +133,32 @@ PVも必要で以下。::
 
 以下、おまけで運用用のコマンド。詳細には解説しない。::
 
+  eng_app_db_init_job.yaml: 構築時一発目に流すjob。DB初期化、テーブル作成、seedデータの投入を実施。
+  create_k8s_related_resource.sh: eng_app関連のk8s関連のリソースを一発作成する。
+  create_istio_related_resources.sh: eng_app関連のistio関連のリソースを一発作成する。
+  delete_k8s_related_resource.sh: eng_app関連のk8s関連のリソースを一括削除する。
+  delete_istio_related_resources.sh: eng_app関連のistio関連のリソースを一括削除する。
+  log_eng_app.sh: eng-app-appのログを見るスクリプト。
+  log_eng_app_db_init_job.sh : eng-app-db-init-jobのログを見るスクリプト。
+  log_eng_app_mysql.sh : eng-app-mysqlのログを見るスクリプト。
+  login_eng_app.sh:eng-app-appにログインするスクリプト。
+  login_eng_app_mysql.sh:eng-app-mysqlにログインするスクリプト。
   
-
-  
-deployment-eng-app-app.yaml
+k8s:deployment-eng-app-app.yaml
 --------------------------------
 
-eng_appを駆動するマニフェストファイル。::
+eng_appを駆動するマニフェストファイル。DeploymentとServiceが入っている。::
 
-  root@kubecon1:~/documents/cloud_native_study/k8s_ope/eng_app# cat deployment-eng-app-app.yaml
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ cat deployment-eng-app-app.yaml 
   apiVersion: apps/v1
   kind: Deployment
   metadata:
     # Deploymentの名前。Namespace内ではユニークである必要があります
     name: eng-app-app
     namespace: eng-app 
+    labels:
+      app: eng-app-app
+      version: v1
   spec:
     # レプリカ数の指定
     replicas: 1
@@ -156,40 +171,73 @@ eng_appを駆動するマニフェストファイル。::
         labels:
           # ラベル指定は必須
           app: eng-app-app
+          version: v1
       spec:
         containers:
         - name: eng-app-app
           image: docker.io/miyakz1192/eng_app:1
           ports:
           - containerPort: 3000
-          command: ["/bin/sh", "-c", "cd /english_study_app/eng_app/ ; rails s -b=0.0.0.0"]
+          command: ["/bin/sh", "-c", "cd /english_study_app/eng_app/public/; rm -r voice ; ln -s /mnt/voice/ voice; cd /english_study_app/eng_app/ ; rails s -b=0.0.0.0"]
           #command: ["/usr/local/bin/rails server"]
           #for debugging
           #command: ["/bin/sh", "-c", "while true; do sleep 3600; done"]
           envFrom:
           - secretRef:
               name: eng-app-secret
-  root@kubecon1:~/documents/cloud_native_study/k8s_ope/eng_app# 
+          volumeMounts:
+          - mountPath: "/mnt"
+            name: eng-app-data
+        volumes:
+          - name: eng-app-data
+            # マウント対象となる Persistent Volume に対応する
+            # Persistent Volume Claimを指定
+            persistentVolumeClaim:
+              claimName: eng-app-data-pvc
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: eng-app-app-service
+    labels:
+      app: eng-app-app
+    namespace: eng-app
+  spec:
+    ports:
+    - port: 3000
+      name: http
+    selector:
+      app: eng-app-app
+  
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ 
+  
 
 ポイントとしては、以下。::
 
-  コンテナポート：3000
-  commandでrailsを起動。
+  コンテナポートとサービスポート：3000
+  プロトコル：http(https化したい)
+  PV: eng-app-dataをマウントしている。
+  commandでrailsを起動。ついでに、public/voiceのシンボリックを/mnt/voiceに貼る。
   eng_appのversion1を使用。
   secret refとして、eng-app-secretを参照。
+  バージョン：v1のDeploymentとして起動。
 
 
-deployment-eng-app-mysql.yaml 
+k8s:deployment-eng-app-mysql.yaml 
 --------------------------------
 
-DBマニフェストファイル。::
+DBマニフェストファイル(DeploymentとServiceが入っている)。::
 
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ cat deployment-eng-app-mysql.yaml 
   apiVersion: apps/v1
   kind: Deployment
   metadata:
     # Deploymentの名前。Namespace内ではユニークである必要があります
     name: eng-app-mysql
     namespace: eng-app
+    labels:
+      app: eng-app-mysql
+      version: v1
   spec:
     # レプリカ数の指定
     replicas: 1
@@ -202,10 +250,11 @@ DBマニフェストファイル。::
         labels:
           # ラベル指定は必須
           app: eng-app-mysql
+          version: v1
       spec:
         containers:
         - name: eng-app-mysql
-          image: docker.io/mysql:latest
+          image: docker.io/mysql:5.7.29 #version is 5.7.29 fix !! don't move it(for stable behavior)
           ports:
           - containerPort: 3306
           envFrom:
@@ -220,11 +269,31 @@ DBマニフェストファイル。::
             # Persistent Volume Claimを指定
             persistentVolumeClaim:
               claimName: eng-app-pvc
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: eng-app-mysql-service
+    labels:
+      app: eng-app-mysql
+    namespace: eng-app
+  spec:
+    ports:
+    - port: 3306
+      name: http
+    selector:
+      app: eng-app-mysql
+  
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ 
+
   
 ポイントは以下。::
-  docker.io/mysql:latestを使用。
-  eng-app-pvcをPersistent Volumeとして利用。
-  コンテナポート：3306
+  mysqlのバージョン：5.7.29で固定。8系は非互換大きく、我のようなDB初心者無理
+  PV: eng-app-pvをマウント。docker.io/mysqlの仕様により、/var/lib/mysqlを指定。
+  コンテナポート、サービスポート：3306
+  プロトコル：http(https化したい)
+  secret refとして、eng-app-secretを参照。
+  バージョン：v1のDeploymentとして起動。
 
 eng_app_secret.yaml  
 ------------------------
@@ -261,6 +330,91 @@ INIT_USER_EMAILは初期ユーザのemailアドレス。
 
 INIT_USER_PASSWDは初期ユーザのパスワード。適当に指定する。
 
+istio:eng_app_gateway.yaml
+----------------------------------
+
+gatewayのマニフェスト。::
+
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ cat eng_app_gateway.yaml 
+  apiVersion: networking.istio.io/v1alpha3
+  kind: Gateway
+  metadata:
+    name: eng-app-gateway
+    namespace: eng-app
+  spec: #I refered bookinfo sample spec
+    selector:
+      istio: ingressgateway # use istio default controller
+    servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+      - "*"
+  
+  
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ 
+
+selectorとhostはおまじないみたいなもの。hostはクライアントのHTTPヘッダのあるフィールドに設定されるドメイン名。eng_appがドメインを取っていれば、hostにそのドメインを設定するべきだが、eng_appはそこまで気合が入っていないので、ドメインを取っていない。したがって、現時点ではhostの値は"*"で正解。
+helloworldサンプル同じく、80(http)をまずは指定。
+将来はhttpsに改善したいと思う。
+(eng_app本体をいじらずにistio側でできたら楽だなぁ。と思う)
+
+istio:eng_app_virtual_service
+---------------------------------
+
+eng_appの仮想サービスの定義。k8sのServiceをVirtualServiceでラップするイメージ(eng-app-app-serviceをeng-app-virtual-serviceでラップする)::
+
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ cat eng_app_virtual_service.yaml 
+  apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+    name: eng-app-virtual-service
+    namespace: eng-app
+  spec:
+    hosts:
+    - "*"
+    gateways:
+    - eng-app-gateway
+    http:
+    - route:
+      - destination:
+          host: eng-app-app-service
+          port:
+            number: 3000
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ 
+
+hostsはGatewayと同じ理由で、"*"を設定する。
+destinationはパケットの宛先はeng-app-app-serviceになるため、宛先ポートを指定する。これは、helloworldサンプルをモロに参考。
+
+istio:eng_app_destination_rules.yaml
+------------------------------------------
+
+Destinaton ruleの定義。現時点ではこの定義はeng-app-virtual-serviceから参照されていないため、役に立っていない。将来、カナリアリリースをするとか、そういった時に役に立つリソースである。楽しみにとっておく。::
+  
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ cat eng_app_destination_rules.yaml 
+  apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    name: eng-app-destination-rules
+    namespace: eng-app
+  spec:
+    host: eng-app-app
+    subsets:
+    - labels:
+        version: v1
+      name: v1
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+  
+  miyakz@lily:~/github_repos/documents/cloud_native_study/k8s_ope/eng_app$ 
+
+これ、hostが間違っている臭い。eng-app-appではなく、eng-app-app-serviceがただしそう。subsetsでversionをv1に指定しているが、これは、Deploymentで指定したversionを指定する(例:v1,v2など)。この辺の使い方はbookinfoサンプルが参考になる。
+
+現時点のeng_appシステムでは、ISTIO_MUTUALではないため、eng-app-appとeng-app-mysql間は暗号化されていないトラフィックが流れると思う。
+
+ただし、こういったネットワーク関連のセキュリティ設定やカナリアリリースを考慮したトラフィックルーティングも、eng_app本体を一切変更すること無く、istio側の設定変更で制御できる点が良いのだと思う(Devがやるべき作業を浮かして、他のヒトに任せられるようになる)。
 
 PV:eng_app.yaml
 ----------------
@@ -371,20 +525,3 @@ eng_app_data用のPVC。以下の定義。::
 
 ポイントはReadOnlyManyを指定してディスクを探す点。
 eng_appシステムにおいては、ReadWriteOnceが1つ、ReadOnlyManyが1つなので、混同することが無い。
-  
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
