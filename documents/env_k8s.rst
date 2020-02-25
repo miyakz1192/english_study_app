@@ -101,12 +101,18 @@ cloud_native_study/k8s_ope/pv/eng_app
 -----------
 
 以下のファイルが存在する。::
-
-  deployment-eng-app-app.yaml : eng-app本体のマニフェスト
-  deployment-eng-app-mysql.yaml : eng-appが使うMySQLのマニフェスト    
+  
+  【k8s関連リソース】
+  deployment-eng-app-app.yaml : eng-app本体のマニフェスト(DeploymentとServiceの定義)
+  deployment-eng-app-mysql.yaml : eng-appが使うMySQLのマニフェスト(DeploymentとServiceの定義)    
   eng_app_secret.yaml           : eng-appとMySQLに関連する設定ファイル(パスワードとか含むためsecretあつかい)。こちらはgitにupしない。
   eng_app_secret_sample.yaml    : 上記のサンプルファイル(gitにupしている)   
 
+  【ネット(istio)関連のリソース】
+  eng_app_gateway.yaml : eng-app-app用のistio gatewayの定義。門番みたいなもの。      
+  eng_app_virtual_service.yaml: eng-app-app-service用のistio VirtualService(eng-app-virtual-service) 。k8sのServiceの機能豊富版。
+  eng_app_destination_rules.yaml: eng-app-virtual-service用の各podへのルーティングルール
+  
 コンテナポートの設定。::
   eng-app本体：3000
   mysql:3306
@@ -115,6 +121,12 @@ PVも必要で以下。::
 
   eng_app.yaml:  eng-app-mysql用のPV定義
   eng_app_pvc.yaml: eng-app-mysql用のPVC定義
+  eng_app_data.yaml: eng-app用のsentence_data.txtやvoiceデータが配置されているPV
+  eng_app_data_pvc.yaml:上記ストレージのPVC
+
+以下、おまけで運用用のコマンド。詳細には解説しない。::
+
+  
 
   
 deployment-eng-app-app.yaml
@@ -308,6 +320,58 @@ PVCを指定する。::
 ポイントは10Gi、ReadWriteOnceのストレージを要求する。
 なお、namespace eng-appにて、PVは１つ、PVCは１つなため、自動的に、
 PV-PVCがマッチングする。
+
+PV:eng_app_data.yaml
+---------------------------
+
+eng-appが必要なsentence_data.txtやvoiceデータが格納済みのストレージのPV。以下の定義。::
+
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: eng-app-data
+    namespace: eng-app
+  spec:
+    capacity:
+      storage: 10Gi
+    accessModes:
+      - ReadOnlyMany
+    # PersistentVolumeClaim を削除した時の動作
+    persistentVolumeReclaimPolicy: Recycle
+  #  storageClassName: slow
+    mountOptions:
+      - hard
+    ## マウント先のNFS Serverの情報を記載
+    nfs:
+      path: /opt/nfs/eng_app_data
+      server: pvserver
+
+ポイントは、他のコンテナからも読めるように想定しているため、accessModesがReadOnlyManyであることと、同じくpvserverの/opt/nfs/eng_app_dataというパスを明示している点。
+
+  
+PVC:eng_app_data_pvc.yaml
+---------------------------
+
+eng_app_data用のPVC。以下の定義。::
+
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: eng-app-data-pvc
+    namespace: eng-app
+  spec:
+    accessModes:
+      - ReadOnlyMany
+    resources:
+      requests:
+        storage: 10Gi
+
+ポイントはReadOnlyManyを指定してディスクを探す点。
+eng_appシステムにおいては、ReadWriteOnceが1つ、ReadOnlyManyが1つなので、混同することが無い。
+  
+
+
+
   
 
 
