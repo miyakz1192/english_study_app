@@ -119,6 +119,7 @@ cloud_native_study/k8s_ope/pv/eng_app
   eng_app_destination_rules.yaml: eng-app-virtual-service用の各podへのルーティングルール
   
 コンテナポートの設定。::
+
   eng-app本体：3000
   mysql:3306
   外部からのアクセス方法： NodePortAddress:PortNum →　http://192.168.100.2:31380
@@ -134,6 +135,7 @@ PVも必要で以下。::
 以下、おまけで運用用のコマンド。詳細には解説しない。::
 
   eng_app_db_init_job.yaml: 構築時一発目に流すjob。DB初期化、テーブル作成、seedデータの投入を実施。
+                            (繰り返し初期構築する場合はpvserverの/opt/nfs/eng_app配下を全部削除すること) 
   create_k8s_related_resource.sh: eng_app関連のk8s関連のリソースを一発作成する。
   create_istio_related_resources.sh: eng_app関連のistio関連のリソースを一発作成する。
   delete_k8s_related_resource.sh: eng_app関連のk8s関連のリソースを一括削除する。
