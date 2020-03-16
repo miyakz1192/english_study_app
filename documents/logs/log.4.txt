@@ -1,0 +1,69 @@
+root@spin-installer:/home/halyard# halhal "deploy apply"
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fac8102fc83, pid=21692, tid=21710
+#
+# JRE version: Java(TM) SE Runtime Environment (13.0.2+8) (build 13.0.2+8)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (13.0.2+8, mixed mode, sharing, tiered, compressed oops, serial gc, linux-amd64)
+# Problematic frame:
+# J 153 c1 java.util.zip.ZipUtils.CENSIG([BI)J java.base@13.0.2 (8 bytes) @ 0x00007fac8102fc83 [0x00007fac8102fc40+0x0000000000000043]
+#
+# Core dump will be written. Default location: /home/halyard/core
+#
+# An error report file with more information is saved as:
+# /home/halyard/hs_err_pid21692.log
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+/usr/local/bin/hal: line 66: 21692 Aborted                 (core dumped) $HAL "$@"
+JVM crashed maybe core produced. retry command  1
++ Get current deployment
+  Success
++ Prep deployment
+  Success
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
+Problems in default.provider.dockerRegistry.dockerhub:
+- WARNING You have a supplied a username but no password.
+
+Problems in default.security:
+- WARNING Your UI or API domain does not have override base URLs
+  set even though your Spinnaker deployment is a Distributed deployment on a
+  remote cloud provider. As a result, you will need to open SSH tunnels against
+  that deployment to access Spinnaker.
+? We recommend that you instead configure an authentication
+  mechanism (OAuth2, SAML2, or x509) to make it easier to access Spinnaker
+  securely, and then register the intended Domain and IP addresses that your
+  publicly facing services will be using.
+
++ Preparation complete... deploying Spinnaker
++ Get current deployment
+  Success
++ Apply deployment
+  Success
++ Deploy spin-redis
+  Success
++ Deploy spin-clouddriver
+  Success
++ Deploy spin-front50
+  Success
++ Deploy spin-orca
+  Success
++ Deploy spin-deck
+  Success
++ Deploy spin-echo
+  Success
++ Deploy spin-gate
+  Success
++ Deploy spin-igor
+  Success
++ Deploy spin-rosco
+  Success
++ Run `hal deploy connect` to connect to Spinnaker.
+root@spin-installer:/home/halyard# 
+

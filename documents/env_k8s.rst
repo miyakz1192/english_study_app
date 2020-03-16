@@ -124,6 +124,11 @@ cloud_native_study/k8s_ope/pv/eng_app
   mysql:3306
   外部からのアクセス方法： NodePortAddress:PortNum →　http://192.168.100.2:31380
                            istio-gatewayによって、31380が80(eng-app-gateway/eng-app-virtual-service)にマッピングされる。
+                           get service でistio-gatewayをdescribeすると、80番ポートにマッピングされているのが、31380だとわかる。
+                           Port:                     http2  80/TCP
+                           TargetPort:               80/TCP
+                           NodePort:                 http2  31380/TCP
+
   
 PVも必要で以下。::
 
@@ -527,3 +532,20 @@ eng_app_data用のPVC。以下の定義。::
 
 ポイントはReadOnlyManyを指定してディスクを探す点。
 eng_appシステムにおいては、ReadWriteOnceが1つ、ReadOnlyManyが1つなので、混同することが無い。
+
+spinnaker
+===============
+
+再び、spinnakerでハマった。
+顛末は、以下に記載。
+
+https://github.com/miyakz1192/documents/blob/master/cloud_native_study/spinnaker_eng_app.rst
+
+
+
+
+
+  
+  
+
+

@@ -1,0 +1,659 @@
+root@spin-installer:/home/halyard# bash -xe ./install.sh 
++ . ./env.sh
+++ export DAEMON_ENDPOINT=http://spin-installer:8064
+++ DAEMON_ENDPOINT=http://spin-installer:8064
+++ export 'HAL_COMMAND=hal --daemon-endpoint http://spin-installer:8064'
+++ HAL_COMMAND='hal --daemon-endpoint http://spin-installer:8064'
++ . ./common.sh
++ minio_name=
++ '[' -z ']'
++ echo 'ERROR: input minio-url name such as spinnaker-minio'
+ERROR: input minio-url name such as spinnaker-minio
++ exit 1
+root@spin-installer:/home/halyard# bash -xe ./install.sh  spinnaker-minio
++ . ./env.sh
+++ export DAEMON_ENDPOINT=http://spin-installer:8064
+++ DAEMON_ENDPOINT=http://spin-installer:8064
+++ export 'HAL_COMMAND=hal --daemon-endpoint http://spin-installer:8064'
+++ HAL_COMMAND='hal --daemon-endpoint http://spin-installer:8064'
++ . ./common.sh
++ minio_name=spinnaker-minio
++ '[' -z spinnaker-minio ']'
++ hal --daemon-endpoint http://spin-installer:8064 --ready
++ bash -xe ./config.sh spinnaker-minio
++ . ./env.sh
+++ export DAEMON_ENDPOINT=http://spin-installer:8064
+++ DAEMON_ENDPOINT=http://spin-installer:8064
+++ export 'HAL_COMMAND=hal --daemon-endpoint http://spin-installer:8064'
+++ HAL_COMMAND='hal --daemon-endpoint http://spin-installer:8064'
++ . ./common.sh
++ minio_name=spinnaker-minio
++ '[' -z spinnaker-minio ']'
++ halhal 'config version edit --version 1.18.4'
++ args='config version edit --version 1.18.4'
++ count=1
++ true
++ rm ./core
+root@spin-installer:/home/halyard# bash -x^C/install.sh  spinnaker-minio
+root@spin-installer:/home/halyard# bash -x ./install.sh  spinnaker-minio
++ . ./env.sh
+++ export DAEMON_ENDPOINT=http://spin-installer:8064
+++ DAEMON_ENDPOINT=http://spin-installer:8064
+++ export 'HAL_COMMAND=hal --daemon-endpoint http://spin-installer:8064'
+++ HAL_COMMAND='hal --daemon-endpoint http://spin-installer:8064'
++ . ./common.sh
++ minio_name=spinnaker-minio
++ '[' -z spinnaker-minio ']'
++ hal --daemon-endpoint http://spin-installer:8064 --ready
++ bash -x ./config.sh spinnaker-minio
++ . ./env.sh
+++ export DAEMON_ENDPOINT=http://spin-installer:8064
+++ DAEMON_ENDPOINT=http://spin-installer:8064
+++ export 'HAL_COMMAND=hal --daemon-endpoint http://spin-installer:8064'
+++ HAL_COMMAND='hal --daemon-endpoint http://spin-installer:8064'
++ . ./common.sh
++ minio_name=spinnaker-minio
++ '[' -z spinnaker-minio ']'
++ halhal 'config version edit --version 1.18.4'
++ args='config version edit --version 1.18.4'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config version edit --version 1.18.4
++ Get current deployment
+  Success
++ Edit Spinnaker version
+  Success
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
++ Spinnaker has been configured to update/install version "1.18.4".
+  Deploy this version of Spinnaker with `hal deploy apply`.
++ '[' '!' -f ./core ']'
++ break
++ echo spinnakeradmin
++ halhal 'config storage s3 edit --endpoint http://spinnaker-minio:9000 --access-key-id spinnakeradmin --secret-access-key --bucket spinnaker'
++ args='config storage s3 edit --endpoint http://spinnaker-minio:9000 --access-key-id spinnakeradmin --secret-access-key --bucket spinnaker'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config storage s3 edit --endpoint http://spinnaker-minio:9000 --access-key-id spinnakeradmin --secret-access-key --bucket spinnaker
++ Get current deployment
+  Success
++ Get persistent store
+  Success
+- No changes supplied.
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config storage edit --type s3'
++ args='config storage edit --type s3'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config storage edit --type s3
++ Get current deployment
+  Success
++ Get persistent storage settings
+  Success
+- No changes supplied.
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config provider docker-registry enable'
++ args='config provider docker-registry enable'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config provider docker-registry enable
++ Get current deployment
+  Success
++ Edit the dockerRegistry provider
+  Success
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
+Problems in default.provider.dockerRegistry.dockerhub:
+- WARNING You have a supplied a username but no password.
+
++ Successfully enabled dockerRegistry
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config provider docker-registry account get dockerhub'
++ args='config provider docker-registry account get dockerhub'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config provider docker-registry account get dockerhub
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f6cc11e1e22, pid=16436, tid=16462
+#
+# JRE version: Java(TM) SE Runtime Environment (13.0.2+8) (build 13.0.2+8)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (13.0.2+8, mixed mode, sharing, tiered, compressed oops, serial gc, linux-amd64)
+# Problematic frame:
+# J 929 c1 java.lang.Class.annotationData()Ljava/lang/Class$AnnotationData; java.base@13.0.2 (44 bytes) @ 0x00007f6cc11e1e22 [0x00007f6cc11e1de0+0x0000000000000042]
+#
+# Core dump will be written. Default location: /home/halyard/core
+#
+# An error report file with more information is saved as:
+# /home/halyard/hs_err_pid16436.log
+Compiled method (c1)   41307  963       3       com.beust.jcommander.ParameterDescription::findResourceBundle (97 bytes)
+ total in heap  [0x00007f6cc11f4d90,0x00007f6cc11f6f40] = 8624
+ relocation     [0x00007f6cc11f4ef0,0x00007f6cc11f50f0] = 512
+ main code      [0x00007f6cc11f5100,0x00007f6cc11f6640] = 5440
+ stub code      [0x00007f6cc11f6640,0x00007f6cc11f67d8] = 408
+ oops           [0x00007f6cc11f67d8,0x00007f6cc11f67f0] = 24
+ metadata       [0x00007f6cc11f67f0,0x00007f6cc11f6840] = 80
+ scopes data    [0x00007f6cc11f6840,0x00007f6cc11f6a40] = 512
+ scopes pcs     [0x00007f6cc11f6a40,0x00007f6cc11f6da0] = 864
+ dependencies   [0x00007f6cc11f6da0,0x00007f6cc11f6db0] = 16
+ handler table  [0x00007f6cc11f6db0,0x00007f6cc11f6ed0] = 288
+ nul chk table  [0x00007f6cc11f6ed0,0x00007f6cc11f6f40] = 112
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+/usr/local/bin/hal: line 66: 16436 Aborted                 (core dumped) $HAL "$@"
++ '[' '!' -f ./core ']'
++ echo 'JVM crashed maybe core produced. retry command ' 1
+JVM crashed maybe core produced. retry command  1
++ count=2
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config provider docker-registry account get dockerhub
++ Get current deployment
+  Success
++ Get dockerhub account
+  Success
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
+Problems in default.provider.dockerRegistry.dockerhub:
+- WARNING You have a supplied a username but no password.
+
++ Account dockerhub: 
+DockerRegistryAccount(address=https://index.docker.io, username=miyakz1192, password=null, passwordCommand=null, email=fake.email@spinnaker.io, cacheIntervalSeconds=30, clientTimeoutMillis=60000, cacheThreads=1, paginateSize=100, sortTagsByDate=false, trackDigests=false, insecureRegistry=false, repositories=[miyakz1192/eng_app], passwordFile=null, dockerconfigFile=null)
++ DOCKERHUB
+
+DockerRegistryAccount(address=https://index.docker.io, username=miyakz1192,
+password=null, passwordCommand=null, email=fake.email@spinnaker.io,
+cacheIntervalSeconds=30, clientTimeoutMillis=60000, cacheThreads=1,
+paginateSize=100, sortTagsByDate=false, trackDigests=false,
+insecureRegistry=false, repositories=[miyakz1192/eng_app], passwordFile=null,
+dockerconfigFile=null)
+
++ '[' '!' -f ./core ']'
++ break
++ PROVIDER_COMMAND=edit
++ halhal 'config provider docker-registry account edit dockerhub --address index.docker.io     --username=miyakz1192 --repositories miyakz1192/eng_app'
++ args='config provider docker-registry account edit dockerhub --address index.docker.io     --username=miyakz1192 --repositories miyakz1192/eng_app'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config provider docker-registry account edit dockerhub --address index.docker.io --username=miyakz1192 --repositories miyakz1192/eng_app
++ Get current deployment
+  Success
++ Get dockerhub account
+  Success
+- No changes supplied.
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config provider kubernetes enable'
++ args='config provider kubernetes enable'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config provider kubernetes enable
++ Get current deployment
+  Success
++ Edit the kubernetes provider
+  Success
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
+Problems in default.provider.kubernetes:
+- WARNING Provider kubernetes is enabled, but no accounts have been
+  configured.
+
++ Successfully enabled kubernetes
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config provider kubernetes account get default'
++ args='config provider kubernetes account get default'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config provider kubernetes account get default
++ Get current deployment
+  Success
+- Get default account
+  Failure
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
+Problems in default.provider.kubernetes:
+- WARNING Provider kubernetes is enabled, but no accounts have been
+  configured.
+
+Problems in Global:
+! ERROR No account with name "default" was found
+? Check if this account was defined in another provider, or create
+  a new one
+
+- Failed to get account default for provider kubernetes.
++ '[' '!' -f ./core ']'
++ break
++ PROVIDER_COMMAND=edit
++ halhal 'config provider kubernetes account edit default --docker-registries dockerhub             --context default --service-account true              --omit-namespaces=kube-system,kube-public --provider-version v2'
++ args='config provider kubernetes account edit default --docker-registries dockerhub             --context default --service-account true              --omit-namespaces=kube-system,kube-public --provider-version v2'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config provider kubernetes account edit default --docker-registries dockerhub --context default --service-account true --omit-namespaces=kube-system,kube-public --provider-version v2
++ Get current deployment
+  Success
+- Get default account
+  Failure
+Problems in Global:
+! ERROR No account with name "default" was found
+? Check if this account was defined in another provider, or create
+  a new one
+
+- Failed to get account default for provider kubernetes.
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config deploy edit --account-name default --type distributed                        --location spinnaker'
++ args='config deploy edit --account-name default --type distributed                        --location spinnaker'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config deploy edit --account-name default --type distributed --location spinnaker
++ Get current deployment
+  Success
++ Get the deployment environment
+  Success
+- Edit the deployment environment
+  Failure
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
+Problems in default.deploymentEnvironment:
+! ERROR Account default not defined.
+
+- Failed to update your deployment environment.
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config features edit --artifacts true'
++ args='config features edit --artifacts true'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config features edit --artifacts true
++ Get current deployment
+  Success
++ Get features
+  Success
+- No changes supplied.
++ '[' '!' -f ./core ']'
++ break
++ halhal 'config features edit --jobs true'
++ args='config features edit --jobs true'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 config features edit --jobs true
+Was passed main parameter '--jobs' but no main parameter was defined in your arg class
++ '[' '!' -f ./core ']'
++ break
++ halhal 'deploy apply'
++ args='deploy apply'
++ count=1
++ true
++ rm ./core
++ hal --daemon-endpoint http://spin-installer:8064 deploy apply
++ Get current deployment
+  Success
++ Prep deployment
+  Success
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
+Problems in default.provider.dockerRegistry.dockerhub:
+- WARNING You have a supplied a username but no password.
+
+Problems in default.provider.kubernetes:
+- WARNING Provider kubernetes is enabled, but no accounts have been
+  configured.
+
++ Preparation complete... deploying Spinnaker
++ Get current deployment
+  Success
++ Apply deployment
+  Success
++ Run `hal deploy connect` to connect to Spinnaker.
+Updating apt package lists...
+Hit:1 http://ppa.launchpad.net/chris-lea/redis-server/ubuntu bionic InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu bionic InRelease
+Get:3 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Ign:4 https://dl.bintray.com/spinnaker-releases/debians bionic InRelease
+Get:5 http://archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Hit:6 http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic InRelease
+Get:7 https://dl.bintray.com/spinnaker-releases/debians bionic Release [4224 B]
+Get:8 https://dl.bintray.com/spinnaker-releases/debians bionic Release.gpg [821 B]
+Hit:9 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu bionic InRelease
+Get:10 http://archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Get:11 https://dl.bintray.com/spinnaker-releases/debians bionic/spinnaker amd64 Packages [114 kB]
+Get:12 http://archive.ubuntu.com/ubuntu bionic-updates/universe amd64 Packages [1355 kB]
+Get:13 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages [1128 kB]
+Get:14 http://archive.ubuntu.com/ubuntu bionic-backports/universe amd64 Packages [4245 B]
+Fetched 2859 kB in 26s (108 kB/s)
+Reading package lists...
+Hit:1 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu bionic InRelease
+Hit:3 http://ppa.launchpad.net/chris-lea/redis-server/ubuntu bionic InRelease
+Ign:4 https://dl.bintray.com/spinnaker-releases/debians bionic InRelease
+Hit:5 http://archive.ubuntu.com/ubuntu bionic-updates InRelease
+Get:6 https://dl.bintray.com/spinnaker-releases/debians bionic Release [4224 B]
+Hit:7 http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic InRelease
+Hit:8 http://archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:9 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu bionic InRelease
+Fetched 4224 B in 25s (168 B/s)
+Reading package lists...
+Warning: apt-key output should not be parsed (stdout is not a terminal)
+OK
+Hit:1 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Hit:2 http://ppa.launchpad.net/chris-lea/redis-server/ubuntu bionic InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu bionic InRelease
+Ign:4 https://dl.bintray.com/spinnaker-releases/debians bionic InRelease
+Get:5 https://dl.bintray.com/spinnaker-releases/debians bionic Release [4224 B]
+Hit:6 http://archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:7 http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic InRelease
+Hit:8 http://archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:9 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu bionic InRelease
+Fetched 4224 B in 24s (177 B/s)
+Reading package lists...
+Installing desired components...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+unzip is already the newest version (6.0-21ubuntu1).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+openjdk-8-jdk is already the newest version (8u242-b08-0ubuntu3~18.04).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+dpkg: ca-certificates-java: dependency problems, but removing anyway as you requested:
+ openjdk-8-jre-headless:amd64 depends on ca-certificates-java.
+
+(Reading database ... 30494 files and directories currently installed.)
+Removing ca-certificates-java (20180516ubuntu1~18.04.1) ...
+Purging configuration files for ca-certificates-java (20180516ubuntu1~18.04.1) ...
+Processing triggers for ca-certificates (20180409) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  ca-certificates-java
+0 upgraded, 1 newly installed, 0 to remove and 3 not upgraded.
+Need to get 12.2 kB of archives.
+After this operation, 43.0 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 ca-certificates-java all 20180516ubuntu1~18.04.1 [12.2 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 12.2 kB in 1s (17.8 kB/s)
+Selecting previously unselected package ca-certificates-java.
+(Reading database ... 30484 files and directories currently installed.)
+Preparing to unpack .../ca-certificates-java_20180516ubuntu1~18.04.1_all.deb ...
+Unpacking ca-certificates-java (20180516ubuntu1~18.04.1) ...
+Setting up ca-certificates-java (20180516ubuntu1~18.04.1) ...
+head: cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory
+Adding debian:AffirmTrust_Premium.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2015.pem
+Adding debian:SZAFIR_ROOT_CA2.pem
+Adding debian:GeoTrust_Primary_Certification_Authority_-_G2.pem
+Adding debian:COMODO_RSA_Certification_Authority.pem
+Adding debian:GeoTrust_Universal_CA.pem
+Adding debian:GlobalSign_Root_CA.pem
+Adding debian:SSL.com_Root_Certification_Authority_RSA.pem
+Adding debian:Certigna.pem
+Adding debian:Certinomis_-_Root_CA.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2011.pem
+Adding debian:Staat_der_Nederlanden_EV_Root_CA.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.pem
+Adding debian:USERTrust_ECC_Certification_Authority.pem
+Adding debian:GeoTrust_Primary_Certification_Authority_-_G3.pem
+Adding debian:thawte_Primary_Root_CA.pem
+Adding debian:Amazon_Root_CA_3.pem
+Adding debian:TUBITAK_Kamu_SM_SSL_Kok_Sertifikasi_-_Surum_1.pem
+Adding debian:Izenpe.com.pem
+Adding debian:SSL.com_EV_Root_Certification_Authority_ECC.pem
+Adding debian:ssl-cert-snakeoil.pem
+Adding debian:OpenTrust_Root_CA_G2.pem
+Adding debian:E-Tugra_Certification_Authority.pem
+Adding debian:OISTE_WISeKey_Global_Root_GB_CA.pem
+Adding debian:IdenTrust_Public_Sector_Root_CA_1.pem
+Adding debian:Microsec_e-Szigno_Root_CA_2009.pem
+Adding debian:GeoTrust_Universal_CA_2.pem
+Adding debian:DigiCert_Assured_ID_Root_CA.pem
+Adding debian:SSL.com_EV_Root_Certification_Authority_RSA_R2.pem
+Adding debian:Secure_Global_CA.pem
+Adding debian:SecureSign_RootCA11.pem
+Adding debian:Taiwan_GRCA.pem
+Adding debian:SwissSign_Silver_CA_-_G2.pem
+Adding debian:Actalis_Authentication_Root_CA.pem
+Adding debian:TrustCor_ECA-1.pem
+Adding debian:Entrust_Root_Certification_Authority_-_G2.pem
+Adding debian:Starfield_Root_Certificate_Authority_-_G2.pem
+Adding debian:AffirmTrust_Commercial.pem
+Adding debian:Amazon_Root_CA_1.pem
+Adding debian:AffirmTrust_Networking.pem
+Adding debian:ISRG_Root_X1.pem
+Adding debian:Global_Chambersign_Root_-_2008.pem
+Adding debian:DigiCert_Trusted_Root_G4.pem
+Adding debian:OpenTrust_Root_CA_G1.pem
+Adding debian:DigiCert_Assured_ID_Root_G2.pem
+Adding debian:Sonera_Class_2_Root_CA.pem
+Adding debian:QuoVadis_Root_CA_2.pem
+Adding debian:Certum_Trusted_Network_CA.pem
+Adding debian:QuoVadis_Root_CA.pem
+Adding debian:DigiCert_Global_Root_G3.pem
+Adding debian:Atos_TrustedRoot_2011.pem
+Adding debian:thawte_Primary_Root_CA_-_G3.pem
+Adding debian:Starfield_Class_2_CA.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_EV_2009.pem
+Adding debian:Baltimore_CyberTrust_Root.pem
+Adding debian:CFCA_EV_ROOT.pem
+Adding debian:Security_Communication_RootCA2.pem
+Adding debian:VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem
+Adding debian:DigiCert_Assured_ID_Root_G3.pem
+Adding debian:SecureTrust_CA.pem
+Adding debian:VeriSign_Universal_Root_Certification_Authority.pem
+Adding debian:LuxTrust_Global_Root_2.pem
+Adding debian:Visa_eCommerce_Root.pem
+Adding debian:Certplus_Root_CA_G2.pem
+Adding debian:Comodo_AAA_Services_root.pem
+Adding debian:Chambers_of_Commerce_Root_-_2008.pem
+Adding debian:GlobalSign_ECC_Root_CA_-_R4.pem
+Adding debian:DST_Root_CA_X3.pem
+Adding debian:Hongkong_Post_Root_CA_1.pem
+Adding debian:OISTE_WISeKey_Global_Root_GA_CA.pem
+Adding debian:TeliaSonera_Root_CA_v1.pem
+Adding debian:Starfield_Services_Root_Certificate_Authority_-_G2.pem
+Adding debian:Staat_der_Nederlanden_Root_CA_-_G3.pem
+Adding debian:GeoTrust_Global_CA.pem
+Adding debian:VeriSign_Class_3_Public_Primary_Certification_Authority_-_G4.pem
+Adding debian:GlobalSign_Root_CA_-_R2.pem
+Adding debian:Network_Solutions_Certificate_Authority.pem
+Adding debian:Entrust.net_Premium_2048_Secure_Server_CA.pem
+Adding debian:Certum_Trusted_Network_CA_2.pem
+Adding debian:GDCA_TrustAUTH_R5_ROOT.pem
+Adding debian:TWCA_Global_Root_CA.pem
+Adding debian:certSIGN_ROOT_CA.pem
+Adding debian:T-TeleSec_GlobalRoot_Class_2.pem
+Adding debian:QuoVadis_Root_CA_3_G3.pem
+Adding debian:T-TeleSec_GlobalRoot_Class_3.pem
+Adding debian:NetLock_Arany_=Class_Gold=_Főtanúsítvány.pem
+Adding debian:ePKI_Root_Certification_Authority.pem
+Adding debian:Buypass_Class_2_Root_CA.pem
+Adding debian:GeoTrust_Primary_Certification_Authority.pem
+Adding debian:COMODO_Certification_Authority.pem
+Adding debian:QuoVadis_Root_CA_1_G3.pem
+Adding debian:DigiCert_High_Assurance_EV_Root_CA.pem
+Adding debian:Entrust_Root_Certification_Authority_-_EC1.pem
+Adding debian:CA_Disig_Root_R2.pem
+Adding debian:DigiCert_Global_Root_G2.pem
+Adding debian:COMODO_ECC_Certification_Authority.pem
+Adding debian:DigiCert_Global_Root_CA.pem
+Adding debian:AC_RAIZ_FNMT-RCM.pem
+Adding debian:EC-ACC.pem
+Adding debian:QuoVadis_Root_CA_2_G3.pem
+Adding debian:Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem
+Adding debian:Entrust_Root_Certification_Authority.pem
+Adding debian:Go_Daddy_Root_Certificate_Authority_-_G2.pem
+Adding debian:IdenTrust_Commercial_Root_CA_1.pem
+Adding debian:Trustis_FPS_Root_CA.pem
+Adding debian:Cybertrust_Global_Root.pem
+Adding debian:AffirmTrust_Premium_ECC.pem
+Adding debian:TÜRKTRUST_Elektronik_Sertifika_Hizmet_Sağlayıcısı_H5.pem
+Adding debian:thawte_Primary_Root_CA_-_G2.pem
+Adding debian:Staat_der_Nederlanden_Root_CA_-_G2.pem
+Adding debian:ACCVRAIZ1.pem
+Adding debian:Security_Communication_Root_CA.pem
+Adding debian:Certplus_Root_CA_G1.pem
+Adding debian:GlobalSign_ECC_Root_CA_-_R5.pem
+Adding debian:OpenTrust_Root_CA_G3.pem
+Adding debian:EE_Certification_Centre_Root_CA.pem
+Adding debian:AddTrust_External_Root.pem
+Adding debian:Amazon_Root_CA_4.pem
+Adding debian:Amazon_Root_CA_2.pem
+Adding debian:Deutsche_Telekom_Root_CA_2.pem
+Adding debian:TrustCor_RootCert_CA-2.pem
+Adding debian:TWCA_Root_Certification_Authority.pem
+Adding debian:SSL.com_Root_Certification_Authority_ECC.pem
+Adding debian:XRamp_Global_CA_Root.pem
+Adding debian:Buypass_Class_3_Root_CA.pem
+Adding debian:SwissSign_Gold_CA_-_G2.pem
+Adding debian:Certplus_Class_2_Primary_CA.pem
+Adding debian:QuoVadis_Root_CA_3.pem
+Adding debian:Go_Daddy_Class_2_CA.pem
+Adding debian:GlobalSign_Root_CA_-_R3.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_2009.pem
+Adding debian:USERTrust_RSA_Certification_Authority.pem
+Adding debian:Verisign_Class_3_Public_Primary_Certification_Authority_-_G3.pem
+Adding debian:TrustCor_RootCert_CA-1.pem
+done.
+Processing triggers for ca-certificates (20180409) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+
+done.
+done.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+spinnaker-igor is already the newest version (1.8.1-20200131073417).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+igor: unrecognized service
+Reading package lists...
+Building dependency tree...
+Reading state information...
+spinnaker-clouddriver is already the newest version (6.5.3-20200225101423).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+clouddriver: unrecognized service
+Reading package lists...
+Building dependency tree...
+Reading state information...
+spinnaker-orca is already the newest version (2.12.1-20200214161433).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+orca: unrecognized service
+Reading package lists...
+Building dependency tree...
+Reading state information...
+spinnaker-deck is already the newest version (2.15.0-20200219152126).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+Site spinnaker already enabled
+Site 000-default already disabled
+Reading package lists...
+Building dependency tree...
+Reading state information...
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+spinnaker-front50 is already the newest version (0.21.0-20200117051825).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+front50: unrecognized service
+Reading package lists...
+Building dependency tree...
+Reading state information...
+spinnaker-rosco is already the newest version (0.16.0-20200117051825).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+rosco: unrecognized service
+Reading package lists...
+Building dependency tree...
+Reading state information...
+spinnaker-echo is already the newest version (2.10.1-20200219152126).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+echo: unrecognized service
+Reading package lists...
+Building dependency tree...
+Reading state information...
+spinnaker-gate is already the newest version (1.14.0-20200117051825).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+gate: unrecognized service
+Reading package lists...
+Building dependency tree...
+Reading state information...
+redis-server is already the newest version (5:5.0.7-1chl1~bionic1).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+/home/halyard/.hal/default/install.sh: line 420: systemctl: command not found
+spinnaker: unrecognized service
+ * Restarting Apache httpd web server apache2
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.244.1.96. Set the 'ServerName' directive globally to suppress this message
+(98)Address already in use: AH00072: make_sock: could not bind to address 127.0.0.1:9000
+no listening sockets available, shutting down
+AH00015: Unable to open logs
+Action 'start' failed.
+The Apache error log may have more information.
+   ...fail!
+! ERROR Error encountered running script. See above output for more
+  details.
++ '[' '!' -f ./core ']'
++ break
+root@spin-installer:/home/halyard# packet_write_wait: Connection to 113.156.58.63 port 22: Broken pipe
+miyakz@lily:~$ kubectl cp ./config.sh spin-installer:/home/halyard -n ${namespace}
+kubectl: コマンドが見つかりません
+miyakz@lily:~$ kubectl cp ./common.sh spin-installer:/home/halyard -n ${namespace}
+kubectl: コマンドが見つかりません
+miyakz@lily:~$ kubectl cp ./env.sh spin-installer:/home/halyard -n ${namespace}
+kubectl: コマンドが見つかりません
+miyakz@lily:~$ kubectl cp ./install.sh spin-installer:/home/halyard -n ${namespace}
+kubectl: コマンドが見つかりません
+miyakz@lily:~$ 
+

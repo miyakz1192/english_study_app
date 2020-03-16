@@ -1,0 +1,25 @@
+root@spin-installer:/home/halyard# PROVIDER_COMMAND='add'
+root@spin-installer:/home/halyard# 
+root@spin-installer:/home/halyard# ls
+after.sh   config.sh  hs_err_pid15229.log  hs_err_pid16436.log  hs_err_pid6214.log  install.sh
+common.sh  env.sh     hs_err_pid15433.log  hs_err_pid5923.log   hs_err_pid6739.log
+root@spin-installer:/home/halyard# . ./env.sh 
+root@spin-installer:/home/halyard# env | grep HAL
+HAL_COMMAND=hal --daemon-endpoint http://spin-installer:8064
+root@spin-installer:/home/halyard# PROVIDER_COMMAND='add'
+root@spin-installer:/home/halyard# . ./common.sh 
+root@spin-installer:/home/halyard# halhal "config provider kubernetes account $PROVIDER_COMMAND default --docker-registries dockerhub \
+>             --context default --service-account true \
+>              --omit-namespaces=kube-system,kube-public --provider-version v2"
++ Get current deployment
+  Success
++ Add the default account
+  Success
+Problems in halconfig:
+- WARNING There is a newer version of Halyard available (1.32.0),
+  please update when possible
+? Run 'sudo update-halyard' to upgrade
+
++ Successfully added account default for provider kubernetes.
+root@spin-installer:/home/halyard# 
+

@@ -1,0 +1,40 @@
+root@spin-installer:/home/halyard# halhal "config features edit --artifacts true"
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fd75902dc60, pid=21566, tid=21590
+#
+# JRE version: Java(TM) SE Runtime Environment (13.0.2+8) (build 13.0.2+8)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (13.0.2+8, mixed mode, sharing, tiered, compressed oops, serial gc, linux-amd64)
+# Problematic frame:
+# J 148 c1 java.util.zip.ZipFile$Source.isMetaName([BII)Z java.base@13.0.2 (141 bytes) @ 0x00007fd75902dc60 [0x00007fd75902dc60+0x0000000000000000]
+#
+# Core dump will be written. Default location: /home/halyard/core
+#
+# An error report file with more information is saved as:
+# /home/halyard/hs_err_pid21566.log
+Compiled method (c1)   34042  148       3       java.util.zip.ZipFile$Source::isMetaName (141 bytes)
+ total in heap  [0x00007fd75902da90,0x00007fd75902e320] = 2192
+ relocation     [0x00007fd75902dbf0,0x00007fd75902dc48] = 88
+ main code      [0x00007fd75902dc60,0x00007fd75902e120] = 1216
+ stub code      [0x00007fd75902e120,0x00007fd75902e1b0] = 144
+ metadata       [0x00007fd75902e1b0,0x00007fd75902e1b8] = 8
+ scopes data    [0x00007fd75902e1b8,0x00007fd75902e210] = 88
+ scopes pcs     [0x00007fd75902e210,0x00007fd75902e300] = 240
+ dependencies   [0x00007fd75902e300,0x00007fd75902e308] = 8
+ nul chk table  [0x00007fd75902e308,0x00007fd75902e320] = 24
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+/usr/local/bin/hal: line 66: 21566 Aborted                 (core dumped) $HAL "$@"
+JVM crashed maybe core produced. retry command  1
++ Get current deployment
+  Success
++ Get features
+  Success
+- No changes supplied.
+root@spin-installer:/home/halyard# halhal "config features edit --jobs true"
+Was passed main parameter '--jobs' but no main parameter was defined in your arg class
+root@spin-installer:/home/halyard# 
+
