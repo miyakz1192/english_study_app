@@ -541,6 +541,321 @@ spinnaker
 
 https://github.com/miyakz1192/documents/blob/master/cloud_native_study/spinnaker_eng_app.rst
 
+まず実験。
+
+単にDeployする設定
+-----------------------
+
+DeployするJSON設定。eng-appのマニフェストも含まれてしまっている。
+こいつをgitにおいているもので、外付けにできないもんか::
+
+  {
+    "account": "default",
+    "cloudProvider": "kubernetes",
+    "manifestArtifactAccount": "embedded-artifact",
+    "manifests": [
+      {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "labels": {
+            "app": "eng-app-app",
+            "version": "v1"
+          },
+          "name": "eng-app-app",
+          "namespace": "eng-app"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "eng-app-app"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "eng-app-app",
+                "version": "v1"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "command": [
+                    "/bin/sh",
+                    "-c",
+                    "cd /english_study_app/eng_app/public/; rm -r voice ; ln -s /mnt/voice/ voice; cd /english_study_app/eng_app/ ; rails s -b=0.0.0.0"
+                  ],
+                  "envFrom": [
+                    {
+                      "secretRef": {
+                        "name": "eng-app-secret"
+                      }
+                    }
+                  ],
+                  "image": "docker.io/miyakz1192/eng_app:1",
+                  "name": "eng-app-app",
+                  "ports": [
+                    {
+                      "containerPort": 3000
+                    }
+                  ],
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/mnt",
+                      "name": "eng-app-data"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "name": "eng-app-data",
+                  "persistentVolumeClaim": {
+                    "claimName": "eng-app-data-pvc"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {
+          "labels": {
+            "app": "eng-app-app"
+          },
+          "name": "eng-app-app-service",
+          "namespace": "eng-app"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 3000
+            }
+          ],
+          "selector": {
+            "app": "eng-app-app"
+          }
+        }
+      },
+      {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "labels": {
+            "app": "eng-app-mysql",
+            "version": "v1"
+          },
+          "name": "eng-app-mysql",
+          "namespace": "eng-app"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "eng-app-mysql"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "eng-app-mysql",
+                "version": "v1"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "envFrom": [
+                    {
+                      "secretRef": {
+                        "name": "eng-app-secret"
+                      }
+                    }
+                  ],
+                  "image": "docker.io/mysql:5.7.29",
+                  "name": "eng-app-mysql",
+                  "ports": [
+                    {
+                      "containerPort": 3306
+                    }
+                  ],
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/var/lib/mysql",
+                      "name": "eng-app-pv"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "name": "eng-app-pv",
+                  "persistentVolumeClaim": {
+                    "claimName": "eng-app-pvc"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {
+          "labels": {
+            "app": "eng-app-mysql"
+          },
+          "name": "eng-app-mysql-service",
+          "namespace": "eng-app"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 3306
+            }
+          ],
+          "selector": {
+            "app": "eng-app-mysql"
+          }
+        }
+      },
+      {
+        "apiVersion": "networking.istio.io/v1alpha3",
+        "kind": "DestinationRule",
+        "metadata": {
+          "name": "eng-app-destination-rules",
+          "namespace": "eng-app"
+        },
+        "spec": {
+          "host": "eng-app-app",
+          "subsets": [
+            {
+              "labels": {
+                "version": "v1"
+              },
+              "name": "v1"
+            }
+          ],
+          "trafficPolicy": {
+            "tls": {
+              "mode": "ISTIO_MUTUAL"
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "networking.istio.io/v1alpha3",
+        "kind": "Gateway",
+        "metadata": {
+          "name": "eng-app-gateway",
+          "namespace": "eng-app"
+        },
+        "spec": {
+          "selector": {
+            "istio": "ingressgateway"
+          },
+          "servers": [
+            {
+              "hosts": [
+                "*"
+              ],
+              "port": {
+                "name": "http",
+                "number": 80,
+                "protocol": "HTTP"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "apiVersion": "networking.istio.io/v1alpha3",
+        "kind": "VirtualService",
+        "metadata": {
+          "name": "eng-app-virtual-service",
+          "namespace": "eng-app"
+        },
+        "spec": {
+          "gateways": [
+            "eng-app-gateway"
+          ],
+          "hosts": [
+            "*"
+          ],
+          "http": [
+            {
+              "route": [
+                {
+                  "destination": {
+                    "host": "eng-app-app-service",
+                    "port": {
+                      "number": 3000
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "moniker": {
+      "app": "eng"
+    },
+    "name": "Deploy (Manifest)",
+    "relationships": {
+      "loadBalancers": [],
+      "securityGroups": []
+    },
+    "source": "text",
+    "type": "deployManifest"
+  }
+  
+
+
+単にDeleteする設定
+--------------------
+
+以下のようなJSON定義。
+ラベルのselectorにappを指定し、EXISTSを指定するのがミソ。
+これにより、appにeng-appを含むdeploymentが選択される。
+すなわち、eng-app-app本体とeng-app-mysqlのDBが同時に削除される。::
+
+  {
+    "account": "default",
+    "app": "eng",
+    "cloudProvider": "kubernetes",
+    "kinds": [
+      "deployment"
+    ],
+    "labelSelectors": {
+      "selectors": [
+        {
+          "key": "app",
+          "kind": "EXISTS",
+          "values": [
+            "eng-app"
+          ]
+        }
+      ]
+    },
+    "location": "eng-app",
+    "mode": "label",
+    "name": "Delete (Manifest)",
+    "options": {
+      "cascading": true
+    },
+    "type": "deleteManifest"
+  }
+
 
 
 
