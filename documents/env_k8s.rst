@@ -937,6 +937,145 @@ dockerのイメージをpush時に内容を変更しないとdigest値が変わ�
 
   1: digest: sha256:47bb87383b3cb6be8b4c57792764528b915fb85651ceb41cba870303ddc687f3 size: 3046
 
+ただし、全然状況が変わらない。多分、eng_appのメージを同じダイジェストだけどもタグをいろいろと変えたり、
+pipelineのトリガー条件(tag)もいろいろ変更したことが原因だろう。キャッシュを消したいと考え以下のサイトを参考にしてみたが、::
+
+  https://community.spinnaker.io/t/trigger-on-push-to-docker-registry/916/10
+  As a workaround for now, you could carefully delete the key in Redis:
+  redis-cli del 'igor:dockerRegistry:v2:dockerhub:scalecube/scalecube-organization:test' which will force Spinnaker to re-index it. Be aware, however, that Spinnaker will trigger any pipelines that trigger on that container when it updates the cache after the deletion, as it will no longer realize the image was present before.
+  
+以下のコマンドを実行してみた::
+
+  root@kubecon1:~/documents/cloud_native_study/k8s_ope/spinnaker/scripts# kubectl exec -it spin5-redis-master-0 -n spinnaker -- bash
+  I have no name!@spin5-redis-master-0:/$ 
+  I have no name!@spin5-redis-master-0:/$ 
+  I have no name!@spin5-redis-master-0:/$ redis-cli
+  127.0.0.1:6379> 
+  I have no name!@spin5-redis-master-0:/$ redis-cli del "igor:dockerRegistry:v2:dockerhub:miyakz1192/eng_app:1"
+  (error) NOAUTH Authentication required.
+
+しかし、上手くいかない。なので、spin5-redisをわざとpodを削除してみた。
+けど上手くいかない。いかのようにキャッシュを保持ししているようだ。。。::
+
+  root@spin-installer:~# curl   http://spin-clouddriver.spinnaker:7002/dockerRegistry/images/find?account=dockerhub | jq .
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100   784  100   784    0     0   4000      0 --:--:-- --:--:-- --:--:--  4237
+  [
+    {
+      "account": "dockerhub",
+      "artifact": {
+        "metadata": {
+          "registry": "index.docker.io"
+        },
+        "name": "miyakz1192/eng_app",
+        "reference": "index.docker.io/miyakz1192/eng_app:2",
+        "type": "docker",
+        "version": "2"
+      },
+      "registry": "index.docker.io",
+      "repository": "miyakz1192/eng_app",
+      "tag": "2"
+    },
+    {
+      "account": "dockerhub",
+      "artifact": {
+        "metadata": {
+          "registry": "index.docker.io"
+        },
+        "name": "miyakz1192/eng_app",
+        "reference": "index.docker.io/miyakz1192/eng_app:3",
+        "type": "docker",
+        "version": "3"
+      },
+      "registry": "index.docker.io",
+      "repository": "miyakz1192/eng_app",
+      "tag": "3"
+    },
+    {
+      "account": "dockerhub",
+      "artifact": {
+        "metadata": {
+          "registry": "index.docker.io"
+        },
+        "name": "miyakz1192/eng_app",
+        "reference": "index.docker.io/miyakz1192/eng_app:1",
+        "type": "docker",
+        "version": "1"
+      },
+      "registry": "index.docker.io",
+      "repository": "miyakz1192/eng_app",
+      "tag": "1"
+    }
+  ]
+  root@spin-installer:~# 
+
+もう、そのようなタグを持っているイメージは無いのにね。
+多分、podを消してもキャッシュが存続するのは、以下のようにPersistentVolumeClaimがあるからだろ。::
+  
+    redis-data:
+      Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+      ClaimName:  redis-data-spin5-redis-master-0
+      ReadOnly:   false
+
+試しに、tag4でイメージを作ってdockerhubにプッシュしたら、上手く行った(trigger条件にtagはdon't careにした)。
+ただし、tagはいつも1でダイジェストが更新されたら、pipelineが走るようにしたい。
+取りうる選択肢は、２つ。redis-cliで削除するか。それともhalで再デプロイするか。
+一応、pipelineはjsonでバックアップしたので、思い切って、spinnakerを再デプロイしてみることにする。
+minioはhalの管轄外なので、データは残ってるし、多分大丈夫。::
+
+  root@spin-installer:/home/halyard# halhal "deploy clean"
+This command cannot be undone. Do you want to continue? (y/N) y
++ Get current deployment
+  Success
+- Clean Deployment of Spinnaker
+  Failure
+Validation in default:
+- WARNING You have not yet selected a version of Spinnaker to
+  deploy.
+? Options include: 
+  - 1.17.7
+  - 1.19.1
+  - 1.18.6
+
+Validation in Global:
+! ERROR You must pick a version of Spinnaker to deploy.
+
+- I know everything hasn't been quite right with me, but I can
+  assure you now, very confidently, that it's going to be alright again.
+- Failed to remove Spinnaker.
+root@spin-installer:/home/halyard# 
+
+  root@spin-installer:/home/halyard# halhal "deploy clean --no-validate=true" 
+  Was passed main parameter 'true' but no main parameter was defined in your arg class
+  root@spin-installer:/home/halyard# halhal "deploy clean --no-validate true"
+  Was passed main parameter 'true' but no main parameter was defined in your arg class
+  root@spin-installer:/home/halyard# halhal "deploy clean --no-validate"
+  This command cannot be undone. Do you want to continue? (y/N) y
+  + Get current deployment
+    Success
+  - Clean Deployment of Spinnaker
+    Failure
+  Validation in Global:
+  ! ERROR You must pick a version of Spinnaker to deploy.
+  
+  - Failed to remove Spinnaker.
+  root@spin-installer:/home/halyard# 
+
+
+チェックが嚴しくなったような、今のhalのバージョンは、1.32。
+一旦、インストールに成功したバージョン(1.29)で試してみる。::
+
+  ++ hal -v
+  1.32.0-20200311111902
+
+
+
+
+  
+  
+    
+
   
 
 
