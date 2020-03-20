@@ -856,6 +856,36 @@ DeployするJSON設定。eng-appのマニフェストも含まれてしまって
     "type": "deleteManifest"
   }
 
+dockerhubのイメージ更新を元にデプロイ
+==========================================
+
+CDのspinnakerが一通り出来たため、CI/CD環境を作成する。
+pipeline/pipe1.jsonに記載したパイプラインを作ったが、
+なぜか、dockerhubにイメージを更新してもデプロイが始まらない。::
+
+  "triggers": [
+   {
+    "account": "dockerhub",
+    "enabled": true,
+    "organization": "miyakz1192",
+    "registry": "index.docker.io",
+    "repository": "miyakz1192/eng_app",
+    "tag": "",
+    "type": "docker"
+   }
+
+以下の記事を参照すると::
+
+  https://github.com/spinnaker/spinnaker/wiki/Docker-Registry-Implementation
+
+以下のように記載がある。::
+
+  Since Clouddriver caches every image digest, we can track when individual tags are created or updated. The Igor microservice was extended to poll for incoming docker changes for every account configured in Clouddriver in igor/pull#64. Once it sees a tag was created, or a tag's digest has changed, it sends an event to the Echo microservice, which acts as an event bus. If the updated repository or tag matches one of the exiting pipeline triggers, Echo will start that pipeline. This was added in echo/pull#76. The Deck microservice had the ability to expose adding Docker triggers to pipelines added in deck/pull#2059.
+
+ということで、igorのログを見ると以下のように、しっかりとtag2を検出しているのだが、pipelineが動かない。
+dockerのイメージをpush時に内容を変更しないとdigest値が変わらない。tagを付け替えただけでは全く変更なし。
+なので、ちゃんと中身を変更する必要がある。
+
 
 
 
