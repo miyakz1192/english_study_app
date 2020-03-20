@@ -886,6 +886,59 @@ pipeline/pipe1.jsonに記載したパイプラインを作ったが、
 dockerのイメージをpush時に内容を変更しないとdigest値が変わらない。tagを付け替えただけでは全く変更なし。
 なので、ちゃんと中身を変更する必要がある。
 
+ただし、コンテナの中のソースの中身を変えたくても、docker buildがキャッシュを使ってしまい、
+更新が出来ない。::
+
+  miyakz@dockerbuild:~/dockerfiles/eng_app$ ./repush_as_tag_1.sh 
+  ++ sudo docker image rm miyakz1192/eng_app:1
+  Error: No such image: miyakz1192/eng_app:1
+  ++ sudo docker build -t eng_app .
+  Sending build context to Docker daemon  4.096kB
+  Step 1/4 : FROM docker.io/miyakz1192/eng_app_base:1
+   ---> c3dd0c3f0e1f
+  Step 2/4 : MAINTAINER miyakz1192 <miyakz1192@gmail.com>
+   ---> Using cache
+   ---> 886411d819be
+  Step 3/4 : ENV DEBIAN_FRONTEND=noninteractive
+   ---> Using cache
+   ---> 214ed282b30f
+  Step 4/4 : RUN  cd /english_study_app/eng_app ; git pull origin master
+   ---> Using cache
+   ---> b40a417bd1d6
+  Successfully built b40a417bd1d6
+  Successfully tagged eng_app:latest
+  +++ sudo docker image list
+  +++ grep 'eng_app '
+  +++ awk '{print $3}'
+  ++ sudo docker tag b40a417bd1d6 miyakz1192/eng_app:1
+  ++ sudo docker push miyakz1192/eng_app:1
+  The push refers to repository [docker.io/miyakz1192/eng_app]
+  c4fa52177fcb: Layer already exists 
+  3243764a145c: Layer already exists 
+  a8a46e54bfa1: Layer already exists 
+  1e5bef97fe42: Layer already exists 
+  7639bfaf3e1c: Layer already exists 
+  abd741d9e448: Layer already exists 
+  868d2f92ffe0: Layer already exists 
+  7f90146b865f: Layer already exists 
+  fcfa834a9aa0: Layer already exists 
+  9497c30cbf12: Layer already exists 
+  1f705bb004bc: Layer already exists 
+  efb37b70f734: Layer already exists 
+  4cbbc216bd6a: Layer already exists 
+  1: digest: sha256:75c79cf44334c0a8c332a377ffe3f83ab494da0d15221841d023ee53d3effc46 size: 3046
+
+前回のsha256ダイジェスト値は75c~だったが、変わらない。理由は、Step 4/4の所でキャッシュを
+使っているため。というわけで、以下の--no-chacheオプションを付けてビルドする必要がある。::
+
+   sudo docker build -t eng_app . --no-cache
+
+これでダイジェスト値を変更することができた。::
+
+  1: digest: sha256:47bb87383b3cb6be8b4c57792764528b915fb85651ceb41cba870303ddc687f3 size: 3046
+
+  
+
 
 
 
