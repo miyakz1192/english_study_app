@@ -1025,40 +1025,40 @@ pipelineのトリガー条件(tag)もいろいろ変更したことが原因だ�
 minioはhalの管轄外なので、データは残ってるし、多分大丈夫。::
 
   root@spin-installer:/home/halyard# halhal "deploy clean"
-This command cannot be undone. Do you want to continue? (y/N) y
-+ Get current deployment
-  Success
-- Clean Deployment of Spinnaker
-  Failure
-Validation in default:
-- WARNING You have not yet selected a version of Spinnaker to
-  deploy.
-? Options include: 
-  - 1.17.7
-  - 1.19.1
-  - 1.18.6
-
-Validation in Global:
-! ERROR You must pick a version of Spinnaker to deploy.
-
-- I know everything hasn't been quite right with me, but I can
-  assure you now, very confidently, that it's going to be alright again.
-- Failed to remove Spinnaker.
-root@spin-installer:/home/halyard# 
-
-  root@spin-installer:/home/halyard# halhal "deploy clean --no-validate=true" 
-  Was passed main parameter 'true' but no main parameter was defined in your arg class
-  root@spin-installer:/home/halyard# halhal "deploy clean --no-validate true"
-  Was passed main parameter 'true' but no main parameter was defined in your arg class
-  root@spin-installer:/home/halyard# halhal "deploy clean --no-validate"
   This command cannot be undone. Do you want to continue? (y/N) y
   + Get current deployment
     Success
   - Clean Deployment of Spinnaker
     Failure
+  Validation in default:
+  - WARNING You have not yet selected a version of Spinnaker to
+    deploy.
+  ? Options include: 
+    - 1.17.7
+    - 1.19.1
+    - 1.18.6
+  
   Validation in Global:
   ! ERROR You must pick a version of Spinnaker to deploy.
   
+  - I know everything hasn't been quite right with me, but I can
+    assure you now, very confidently, that it's going to be alright again.
+  - Failed to remove Spinnaker.
+  root@spin-installer:/home/halyard# 
+  
+    root@spin-installer:/home/halyard# halhal "deploy clean --no-validate=true" 
+    Was passed main parameter 'true' but no main parameter was defined in your arg class
+    root@spin-installer:/home/halyard# halhal "deploy clean --no-validate true"
+    Was passed main parameter 'true' but no main parameter was defined in your arg class
+    root@spin-installer:/home/halyard# halhal "deploy clean --no-validate"
+    This command cannot be undone. Do you want to continue? (y/N) y
+    + Get current deployment
+      Success
+    - Clean Deployment of Spinnaker
+      Failure
+    Validation in Global:
+    ! ERROR You must pick a version of Spinnaker to deploy.
+    
   - Failed to remove Spinnaker.
   root@spin-installer:/home/halyard# 
 
@@ -1068,6 +1068,40 @@ root@spin-installer:/home/halyard#
 
   ++ hal -v
   1.32.0-20200311111902
+
+1.29.0で試してみたが、同じ状態。::
+
+  root@spin-installer:/home/halyard# halhal "-v"
+  1.29.0-20200106172816
+  root@spin-installer:/home/halyard# 
+
+
+  root@spin-installer:/home/halyard# halhal "deploy clean"
+  This command cannot be undone. Do you want to continue? (y/N) y
+  + Get current deployment
+    Success
+  - Clean Deployment of Spinnaker
+    Failure
+  Validation in halconfig:
+  - WARNING There is a newer version of Halyard available (1.32.0),
+    please update when possible
+  ? Run 'sudo update-halyard' to upgrade
+  
+  Validation in Global:
+  ! ERROR You must pick a version of Spinnaker to deploy.
+  
+  - Failed to remove Spinnaker.
+  root@spin-installer:/home/halyard# 
+
+なんか、バージョンを選択するということは、halコマンドで設定するコトと等しいということが
+わかってきたような。ということで、以下の手順で実施した所、うまくいった。::
+
+   26  bash -x ./config.sh spinnaker-minio
+   30  halhal "deploy clean"
+
+再度、spinnakerをインストールする。
+
+  
 
 
 
