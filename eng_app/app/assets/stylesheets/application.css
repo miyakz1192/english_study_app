@@ -16,17 +16,84 @@
 /* thanks! https://www.webcreatorbox.com/tech/dark-mode */
 
 :root {
-  --main-text: #333;
-  --main-bg: #fff;
+  --main-text: #333; /*black*/
+  --main-bg: #fff; /* white */
+  --main-button-bg: #248;
+  --main-button-text: #fff;
+  --main-textbox-bg: #fff;
+  --main-textbox-text: #333;
+  --main-textbox-border: solid;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --main-text: #999;
     --main-bg: #000;
+    --main-button-bg: #999;
+    --main-button-text: #333;
+    --main-textbox-bg: #999;
+    --main-textbox-text: #333;
+    --main-textbox-border: none;
   }
 }
  
 body {
   color: var(--main-text);
   background-color: var(--main-bg);
+}
+
+/* button タグ用の設定 */
+button.button1 {
+    /* 文字サイズを標準100%である、相対値1.0emに指定 */
+    font-size: 1.0em;
+
+    /* 縦方向に7px、
+     * 横方向に7pxの余白を指定 */
+    padding: 7px 7px;
+
+    /* 背景色を指定 */
+    background-color: var(--main-button-bg);
+
+    /* 文字色を指定 */
+    color: var(--main-button-text);
+
+    /* ボーダーをなくす */
+    border-style: none;
+}
+
+/* button_to で生成されるボタン(inputタグ)の設定 */
+input.button1 {
+    /* 文字サイズを1.4emに指定 */
+    font-size: 1.0em;
+
+    /* 縦方向に7px、
+     * 横方向に7pxの余白を指定 */
+    padding: 7px 7px;
+
+    /* 背景色を指定 */
+    background-color: var(--main-button-bg);
+
+    /* 文字色を指定 */
+    color: var(--main-button-text);
+
+    /* ボーダーをなくす */
+    border-style: none;
+}
+
+/* テキストボックスのための設定 */
+input.text1 {
+    /* 文字サイズを標準100%である、相対値1.0emに指定 */
+    font-size: 1.0em;
+
+    /* 縦方向に10px、
+     * 横方向に30pxの余白を指定 */
+    padding: 7px 7px;
+
+    /* 背景色を濃い青色に指定 */
+    background-color: var(--main-textbox-bg);
+
+    /* 文字色を白色に指定 */
+    color: var(--main-textbox-text);
+
+    /* ボーダーをなくす */
+    border-style: var(--main-textbox-border); 
 }
