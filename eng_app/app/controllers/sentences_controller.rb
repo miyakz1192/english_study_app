@@ -13,7 +13,10 @@ class SentencesController < ApplicationController
   # GET /sentences/1
   # GET /sentences/1.json
   def show
-    @wm_cache = {}
+    @wm_cache = {} if defined?(@wm_cache).nil?
+    if @wm_cache[@sentences.no].blank?
+
+    end
   end
 
   # GET /sentences/new
