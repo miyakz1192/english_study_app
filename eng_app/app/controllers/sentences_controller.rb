@@ -13,6 +13,7 @@ class SentencesController < ApplicationController
   # GET /sentences/1
   # GET /sentences/1.json
   def show
+    @wm_cache = {}
   end
 
   # GET /sentences/new
