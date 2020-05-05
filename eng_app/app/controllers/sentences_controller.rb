@@ -1,3 +1,41 @@
+
+require "word_meaning_service.rb"
+
+class WMChache
+
+  attr_accessor :cache
+
+  def initialize
+    @chache = {}
+  end
+
+  def update(sentence)
+    return unless need_update?(sentence)
+    @cache[sentence.no] = 
+        {date: Time.now
+         data: WordMeaningService.new.get(sentence)}
+  end
+
+  def presenter(sentence)
+    return nil if @cache[sentence.no].blank?
+    WordMeaningPresenter.new(@cache[sentence.no][:data])
+  end
+
+protected
+
+  def need_update?(sentence)
+    no = sentence.no
+    if @cache[no].present? && 
+       (Time.now - @cache[no][:date]) >= 1.days
+      return true
+    end
+    if @cache[no].blank?
+      return true
+    end
+    return false
+  end
+end
+
 class SentencesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sentence, only: [:show, :edit, :update, :destroy]
@@ -13,10 +51,9 @@ class SentencesController < ApplicationController
   # GET /sentences/1
   # GET /sentences/1.json
   def show
-    @wm_cache = {} if defined?(@wm_cache).nil?
-    if @wm_cache[@sentences.no].blank?
-
-    end
+    @wm_cache = WMChache.new if defined?(@wm_cache).nil?
+    @wm_cache.update(@sentence)
+    @wmp = @wm_cache.presenter(@sentence)
   end
 
   # GET /sentences/new
