@@ -8,6 +8,11 @@ class WordMeaningService
   end
 
   def get(sentence)
-    JSON.load(open("#{@uri}/#{sentence.no}").read)
+    begin
+      JSON.load(open("#{@uri}/#{sentence.no}").read)
+    rescue => e
+      logger.debug(e)
+      return [{"en" => "<<Woops!!>>", "note" => "<<failed with WMS>>", "url" => "http://"} ]
+    end
   end
 end
