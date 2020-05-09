@@ -17,15 +17,15 @@
   <%= @sentence.jp %>
 </p>
 
-<div id="disp" style="visibility:hidden">
+<div name="swdisp" style="visibility:hidden">
   <p>
     <strong>En:</strong>
     <%= @sentence.en %>
   </p>
 </div>
 
-<button class="button1" type="submit" onclick="hyoji1('disp',0)">答え表示</button>
-<button class="button1" type="submit" onclick="hyoji1('disp',1)">答え非表示</button>
+<button class="button1" type="submit" onclick="hyoji1('swdisp',0)">答え表示</button>
+<button class="button1" type="submit" onclick="hyoji1('swdisp',1)">答え非表示</button>
 
 <br>
 <br>
@@ -63,7 +63,7 @@
 <br>
 <hr>
 
-<div id="disp" style="visibility:hidden">
+<div name="swdisp" style="visibility:hidden">
   <%= @wmp.html %>
 </div>
 
@@ -77,15 +77,15 @@
 <br>
 
 <script>
-  function hyoji1(elemid, num)
+  function hyoji1(elemname, num)
   {
     if (num == 0)
     {
-      document.getElementById(elemid).style.visibility="visible";
+      document.getElementsByName(elemname).forEach(e => e.style.visibility="visible");
     }
     else
     {
-      document.getElementById(elemid).style.visibility="hidden";
+      document.getElementsByName(elemname).forEach(e => e.style.visibility="hidden");
     }
   }
 

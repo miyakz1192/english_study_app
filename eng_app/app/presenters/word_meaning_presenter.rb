@@ -22,21 +22,34 @@ class WordMeaningPresenter
 
 protected
   def td(word, meaning, link)
-    "<tr class=\"wmtr\">
-        <td class=\"wmtd\"><a href=\"#{link}\" class=\"wma\">#{word}</a></td>
-        <td class=\"wmtd\">#{meaning}</td>
+    "<tr>
+        <td><a href=\"#{link}\">#{word}</a></td>
+        <td>#{meaning}</td>
      </tr>
     "
+#    "<tr class=\"wmtr\">
+#        <td class=\"wmtd\"><a href=\"#{link}\" class=\"wma\">#{word}</a></td>
+#        <td class=\"wmtd\">#{meaning}</td>
+#     </tr>
+#    "
   end
 
   def table(data)
-    "<table border=\"5\" bordercolor=\"bule\" class=\"wmtable\">
-       <tr class=\"wmtr\">
-         <th class=\"wmth\">word</th>
-         <th class=\"wmth\">meaning</th>
+    "<table border=\"5\" bordercolor=\"bule\">
+       <tr>
+         <th>word</th>
+         <th>meaning</th>
        </tr>
        #{data}
      </table>
     "
+#    "<table border=\"5\" bordercolor=\"bule\" class=\"wmtable\">
+#       <tr class=\"wmtr\">
+#         <th class=\"wmth\">word</th>
+#         <th class=\"wmth\">meaning</th>
+#       </tr>
+#       #{data}
+#     </table>
+#    "
   end
 end
