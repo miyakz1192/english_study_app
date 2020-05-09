@@ -17,7 +17,7 @@ class WordMeaningPresenter
 
   #data: WordMeaningService.get result
   def html
-    @html_data
+    @html_data.html_safe
   end
 
 protected

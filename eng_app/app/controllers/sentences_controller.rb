@@ -6,13 +6,13 @@ class WMChache
   attr_accessor :cache
 
   def initialize
-    @chache = {}
+    @cache = {}
   end
 
   def update(sentence)
     return unless need_update?(sentence)
     @cache[sentence.no] = 
-        {date: Time.now
+        {date: Time.now,
          data: WordMeaningService.new.get(sentence)}
   end
 
