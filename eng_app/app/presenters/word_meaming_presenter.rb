@@ -3,9 +3,15 @@ class WordMeaningPresenter
 
   def initialize(data)
     temp = "" 
-    data.each do |wm|
-      temp << td(wm["en"], wm["note"], wm["url"])
+
+    if data.blank?
+      temp << td("data collecting now", "data collecting now", "http://google.com")
+    else 
+      data.each do |wm|
+        temp << td(wm["en"], wm["note"], wm["url"])
+      end
     end
+
     @html_data = table(temp)
   end
 
