@@ -35,7 +35,7 @@ protected
   end
 
   def table(data)
-    "<table border=\"5\" bordercolor=\"bule\">
+    "<table border=\"5\">
        <tr>
          <th>word</th>
          <th>meaning</th>

@@ -63,15 +63,15 @@
 <br>
 <hr>
 
-<div name="swdisp" style="visibility:hidden">
-  <%= @wmp.html %>
-</div>
+<%= link_to 'Prev', sentence_path(current_user.view_model.prev_sentence(@sentence)) %>    
+<%= link_to 'Next', sentence_path(current_user.view_model.next_sentence(@sentence)) %>
 
 <br>
 <hr>
 
-<%= link_to 'Prev', sentence_path(current_user.view_model.prev_sentence(@sentence)) %>    
-<%= link_to 'Next', sentence_path(current_user.view_model.next_sentence(@sentence)) %>
+<div name="swdisp" style="visibility:hidden">
+  <%= @wmp.html %>
+</div>
 
 <br>
 <br>
