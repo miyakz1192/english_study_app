@@ -11,8 +11,9 @@ class WordMeaningService
     begin
       JSON.load(open("#{@uri}/#{sentence.no}").read)
     rescue => e
-      logger.debug(e)
-      return [{"en" => "<<Woops!!>>", "note" => "<<failed with WMS>>", "url" => "http://"} ]
+      Rails.logger.error ("ERROR in WordMeaningService:get")
+      Rails.logger.error ([e.message]+e.backtrace).join($/)
+      return [{"en" => "Woops!!", "note" => "failed with WMS", "url" => "http://"} ]
     end
   end
 end
