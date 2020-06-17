@@ -1,0 +1,3 @@
+[submodule "eng_app/lib/erpc"]
+	path = eng_app/lib/erpc
+	url = https://github.com/miyakz1192/erpc.git
