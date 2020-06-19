@@ -16,7 +16,7 @@ def main
   sentence = stub.list_by_worst(u) # ERRRO
   p "output=#{sentence.inspect}"
 
-  puts "end client"
+  puts "end client. num of sentences = #{sentence.sentences.size}"
 end
 
 main
