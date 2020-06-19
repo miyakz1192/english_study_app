@@ -28,7 +28,8 @@ def main2
 
   puts "start client"
   stub = Erpc::SentenceService::Stub.new('localhost:50051', :this_channel_is_insecure)
-  u = Erpc::User.new({id: "req_from_client_1"})
+  #u = Erpc::User.new({id: "req_from_client_1"})
+  u = Erpc::User.new({id: "1"})
 
   puts u.class.name
   puts u.class.inspect

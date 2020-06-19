@@ -118,6 +118,12 @@ class SentencesController < ApplicationController
     end
   end
 
+  def self.list_by_worst(user_id)
+    user = User.first
+    raise "user #{user_id} not found" unless user
+    return user.view_model.worst
+  end 
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_sentence
