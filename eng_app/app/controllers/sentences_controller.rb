@@ -119,9 +119,9 @@ class SentencesController < ApplicationController
   end
 
   def self.list_by_worst(user_id)
-    user = User.first
+    user = User.find_by_id(user_id)
     raise "user #{user_id} not found" unless user
-    return user.view_model.worst
+    return user.view_model.worst.map{|s| {no: s.no, score: s.score}}
   end 
 
   private
