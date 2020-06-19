@@ -12,6 +12,13 @@ class SentenceServer < Erpc::SentenceService::Service
     s1 = Erpc::Sentence.new(no:1, data: ["s1"])
     s2 = Erpc::Sentence.new(no:2, data: ["s2"])
     s = Erpc::Sentences.new(sentences: [s1, s2])
+
+    puts "test calling active model" 
+    sentences = ::Sentences.all
+
+    #/var/lib/gems/2.5.0/gems/grpc-1.28.0-x86_64-linux/src/ruby/lib/grpc/generic/active_call.rb:31:in `check_status': 2:NameError: uninitialized constant SentenceServer::Sentences (GRPC::Unknown)
+    puts "#{sentences.first}"
+
     return s
     #return Erpc::Sentence.new(no: 1, data: ["h", "e", "l", "l", "o", "!"])
   end
