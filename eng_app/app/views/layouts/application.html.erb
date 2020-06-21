@@ -32,7 +32,7 @@
           <br>
           <%= link_to 'dashboard', dashboard_index_path %>
           <br>
-          <%= link_to 'streaming', "http://miyakz1192.ddns.net:3001/#{current_user.id}" %>
+          <%= link_to 'streaming', "http://miyakz1192.ddns.net:3001/#{current_user.id}" if current_user %>
         </nav>
     </footer>
   </body>
