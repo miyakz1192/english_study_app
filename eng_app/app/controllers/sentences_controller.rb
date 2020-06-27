@@ -118,13 +118,13 @@ class SentencesController < ApplicationController
     end
   end
 
-  def self.list_by_worst(user_id)
+  def self.list_sentences(user_id)
     user = nil
     res = nil
     ActiveRecord::Base.connection_pool.with_connection do
       user = User.find_by_id(user_id)
       raise "user #{user_id} not found" unless user
-      res = user.view_model.worst.map{|s| {no: s[0].no, score: s[1]}}
+      res = user.view_model.sentences.map{|s| {no: s[0].no, score: s[1]}}
     end
     return res
   end 

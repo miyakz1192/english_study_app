@@ -8,7 +8,7 @@ class SentenceServer < Erpc::SentenceService::Service
 
   def list_by_worst(user, _unused_call)
     puts "test calling active model" 
-    res = ::SentencesController.list_by_worst(user.id).map{|s| Erpc::Sentence.new(s)}
+    res = ::SentencesController.list_sentences(user.id).map{|s| Erpc::Sentence.new(s)}
     return Erpc::Sentences.new(sentences: res)
   end
 end
