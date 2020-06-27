@@ -6,7 +6,7 @@ require './app/controllers/sentences_controller.rb'
 
 class SentenceServer < Erpc::SentenceService::Service
 
-  def list_by_worst(user, _unused_call)
+  def list_sentences(user, _unused_call)
     puts "test calling active model" 
     res = ::SentencesController.list_sentences(user.id).map{|s| Erpc::Sentence.new(s)}
     return Erpc::Sentences.new(sentences: res)
