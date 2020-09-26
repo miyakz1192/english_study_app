@@ -32,8 +32,8 @@
           <br>
           <%= link_to 'dashboard', dashboard_index_path %>
           <br>
-          <%= link_to 'streaming(global)', "#{ENV.fetch('ENG_APP_URL_CALLED_FROM_GLOBAL')}/?user_id=#{current_user.id}&location=global" if current_user %>
-          <%= link_to 'streaming(local)', "#{ENV.fetch('ENG_APP_URL_CALLED_FROM_LOCAL')}/?user_id=#{current_user.id}&location=local" if current_user %>
+          <%= link_to 'streaming(global)', "#{ENV.fetch('ENG_APP_ST_URL_CALLED_FROM_GLOBAL')}/?user_id=#{current_user.id}&location=global" if current_user %>
+          <%= link_to 'streaming(local)', "#{ENV.fetch('ENG_APP_ST_URL_CALLED_FROM_LOCAL')}/?user_id=#{current_user.id}&location=local" if current_user %>
         </nav>
     </footer>
   </body>
